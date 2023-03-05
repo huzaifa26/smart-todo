@@ -19,7 +19,7 @@ export default function AddTask() {
       console.log(data);
       return axios.post(`${API_URL}tasks/add/`, data)
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       openDialog({ type: "success", title: "Task added succesfully" })
       queryClient.invalidateQueries("tasks");
     },

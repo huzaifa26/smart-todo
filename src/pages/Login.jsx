@@ -22,8 +22,9 @@ export default function Login() {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(['user'], data.data);
+      localStorage.setItem("user",JSON.stringify(data.data));
       openDialog({type:"success",title:"Login Successfull"});
-      navigate("/dashboard");
+      navigate("/home/dashboard");
     },
     onError:(error) =>{
       openDialog({type:"error",title:error.response.data?.non_field_errors[0]});

@@ -37,7 +37,7 @@ export default function Tasks() {
       <div className='flex-1 bg-white rounded-xl p-2 divide-y-2'>
         <div className='flex justify-between items-center'>
           <h1 className='text-2xl font-bold p-2'>Tasks</h1>
-          <button onClick={()=> navigate("/dashboard/add-task")} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-40 h-10'><MdAddTask className='inline text-2xl mr-2'/>Add Task</button>
+          <button onClick={()=> navigate("/home/add-task")} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-40 h-10'><MdAddTask className='inline text-2xl mr-2'/>Add Task</button>
         </div>
         <div className='p-2 pt-4 mt-2 space-y-4'>
           {isLoading ? <h1>Loading...</h1> : data.length>0 ? data?.map((task, index) => {
