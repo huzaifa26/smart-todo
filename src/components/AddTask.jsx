@@ -8,7 +8,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 
 export default function AddTask() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const { openDialog } = useContext(DialogContext);
   const navigate = useNavigate();
@@ -28,12 +28,15 @@ export default function AddTask() {
       if (error.response.data?.non_field_errors) {
         openDialog({ type: "error", title: error.response.data?.non_field_errors[0] })
       }
+      if (error.response.data?.title) {
+        openDialog({ type: "error", title: error.response.data?.title[0] })
+      }
     }
   })
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    let user = queryClient.getQueriesData(["user"])
+    let user = queryClient.getQueriesData(["user"]);
     let data = {
       user: user[0][1].data.id,
       title: formRef.current.title.value,

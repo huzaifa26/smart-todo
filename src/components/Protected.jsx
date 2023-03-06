@@ -3,11 +3,11 @@ import { useEffect, useLayoutEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 
-function Protected() {
+export default function Protected() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const user = localStorage.getItem("user")
-  console.log(user);
+  console.log(JSON.parse(user));
 
   useEffect(() => {
     if (user === null) {
@@ -26,4 +26,3 @@ function Protected() {
     </>
   )
 }
-export default Protected;

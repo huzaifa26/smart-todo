@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-export default function TaskList({task}) {
+export default function TaskList({task,openModalHandler}) {
 
     const date = new Date(task.added_date)
     const year = date.getFullYear();
@@ -12,10 +12,11 @@ export default function TaskList({task}) {
     const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
     return (
-      <div key={task.id} style={{ boxShadow: "0px 0px 4px rgba(0,0,0,0.2)" }} className='h-[80px] rounded-lg p-2 w-full'>
+      <div onClick={()=>openModalHandler(task)} key={task.id} style={{ boxShadow: "0px 0px 4px rgba(0,0,0,0.2)" }} className='h-[80px] rounded-lg p-2 w-full'>
         <h2 className='text-lg font-bold'>{task.title}</h2>
         <p class="truncate w-[38vw] text-sm">{task.description}</p>
         <p class="truncate w-[38vw] text-[10px]">{formattedDate}</p>
+        <button onClick={(event)=> {alert(1);event.stopPropagation();}}>submit</button>
       </div>
     )
 }
