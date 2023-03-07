@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
 import AddTask from "./components/AddTask";
+import EditTask from "./components/EditTask";
 import Layout from "./components/Layout";
 import Protected from "./components/Protected";
 import DialogProvider from "./context/modal-context";
@@ -20,6 +21,7 @@ export default function App() {
             <Route path="dashboard" element={<Layout><Dashboard /></Layout>}></Route>
             <Route path="tasks" element={<Layout><Tasks /></Layout>}></Route>
             <Route path="add-task" element={<Layout><AddTask /></Layout>}></Route>
+            <Route path="Edit-task" element={<Layout><EditTask /></Layout>}></Route>
             <Route path="setting" element={<Layout><Setting /></Layout>}></Route>
           </Route>
         </Routes>

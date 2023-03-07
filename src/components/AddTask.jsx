@@ -5,6 +5,10 @@ import { useMutation } from '@tanstack/react-query';
 import { API_URL, DialogContext } from './constants';
 import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
+import { MdOutlineSubtitles } from "react-icons/md"
+import { MdOutlineDescription } from "react-icons/md"
+import { BiCategoryAlt } from "react-icons/bi"
+import { AiOutlineFieldTime } from "react-icons/ai"
 
 
 export default function AddTask() {
@@ -57,15 +61,30 @@ export default function AddTask() {
       </div>
       <div>
         <form ref={formRef} onSubmit={formSubmitHandler} className='flex flex-col gap-3 w-[40%] mt-8 p-2'>
-          <input className='border-[2px] border-[#0E123F] rounded-lg p-2 outline-none focus:border-[#AF91E9]' type={"text"} name='title' placeholder='Title'></input>
-          <textarea className='border-[2px] border-[#0E123F] rounded-lg p-2 outline-none focus:border-[#AF91E9]' rows={5} name='description' placeholder='Description'></textarea>
-          <select name='category' className='border-[2px] border-[#0E123F] rounded-lg p-2 outline-none focus:border-[#AF91E9]'>
-            <option value={"sport"}>Sport</option>
-            <option value={"gaming"}>Gaming</option>
-            <option value={"study"}>Study</option>
-          </select>
-          <input name='start_time' onFocus={(e) => { e.target.type = "datetime-local" }} onBlur={(e) => { if (e.target.value === "") { e.target.type = "text" }; }} className='border-[2px] border-[#0E123F] rounded-lg p-2 outline-none focus:border-[#AF91E9]' type={"text"} placeholder="Enter Start date and time" />
-          <input name='end_time' onFocus={(e) => { e.target.type = "datetime-local" }} onBlur={(e) => { if (e.target.value === "") { e.target.type = "text" }; }} className='border-[2px] border-[#0E123F] rounded-lg p-2 outline-none focus:border-[#AF91E9]' type={"text"} placeholder="Enter End date and time" />
+          <div className='border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg flex items-center relative'>
+            <MdOutlineSubtitles className='ml-2 absolute' />
+            <input className='flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[#AF91E9]' type={"text"} name='title' placeholder='Title'></input>
+          </div>
+          <div className='border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg flex relative'>
+            <MdOutlineDescription className='ml-2 mt-3 absolute' />
+            <textarea className='flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[#AF91E9]' rows={5} name='description' placeholder='Description'></textarea>
+          </div>
+          <div className='border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg flex relative'>
+            <BiCategoryAlt className='ml-2 mt-3 absolute' />
+            <select name='category' className='flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[#AF91E9]'>
+              <option value={"sport"}>Sport</option>
+              <option value={"gaming"}>Gaming</option>
+              <option value={"study"}>Study</option>
+            </select>
+          </div>
+          <div className='border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg flex relative'>
+            <AiOutlineFieldTime className='ml-2 mt-3 absolute' />
+            <input name='start_time' onFocus={(e) => { e.target.type = "datetime-local";e.target.style.textIndent="16px" }} onBlur={(e) => { if (e.target.value === "") { e.target.type = "text";e.target.style.textIndent="24px" }; }} className='indent-6 flex-1 rounded-lg p-2 outline-none focus:border-[#AF91E9] min-h-[42px]' type={"text"} placeholder="Enter Start date and time" />
+          </div>
+          <div className='border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg flex relative'>
+            <AiOutlineFieldTime className='ml-2 mt-3 absolute' />
+            <input name='end_time' onFocus={(e) => { e.target.type = "datetime-local";e.target.style.textIndent="16px" }} onBlur={(e) => { if (e.target.value === "") { e.target.type = "text";e.target.style.textIndent="24px" }}} className='indent-6 flex-1 rounded-lg p-2 outline-none focus:border-[#AF91E9] min-h-[42px]' type={"text"} placeholder="Enter End date and time" />
+          </div>
           <button type='submit' className='bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-32 h-10'>Submit</button>
         </form>
       </div>

@@ -12,20 +12,20 @@ export default function Layout({children}) {
         <h1 className='font-bold text-2xl text-center'>Logo</h1>
         <div className='mt-16 flex flex-col justify-between h-[85%]'>
           <ul className='text-lg space-y-6'>
-            <NavLink end to={"/home/dashboard"} className={({ isActive }) => isActive ? 'flex items-center space-x-4 bg-[#AF91E9] h-14 p-4 rounded-xl' : 'flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920]'}>
+            <NavLink end to={"/home/dashboard"} className={({ isActive }) => isActive ? 'flex items-center space-x-4 bg-[#AF91E9] h-14 p-4 rounded-xl' : 'flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920] transition-colors'}>
               <MdDashboard className='text-2xl' />
               <li> Dashboard</li>
             </NavLink>
-            <NavLink end to={"/home/tasks"} className={({ isActive }) => isActive ? 'flex items-center space-x-4 bg-[#AF91E9] h-14 p-4 rounded-xl' : 'flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920]'}>
+            <NavLink end to={"/home/tasks"} className={({ isActive }) => isActive ? 'flex items-center space-x-4 bg-[#AF91E9] h-14 p-4 rounded-xl' : 'flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920] transition-colors'}>
               <FaTasks className='text-2xl' />
               <li>Tasks</li>
             </NavLink>
-            <NavLink end to={"/home/setting"} className={({ isActive }) => isActive ? 'flex items-center space-x-4 bg-[#AF91E9] h-14 p-4 rounded-xl' : 'flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920]'}>
+            <NavLink end to={"/home/setting"} className={({ isActive }) => isActive ? 'flex items-center space-x-4 bg-[#AF91E9] h-14 p-4 rounded-xl' : 'flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920] transition-colors'}>
               <AiFillSetting className='text-2xl' />
               <li>Setting</li>
             </NavLink>
           </ul>
-          <NavLink to={'/'} onClick={()=> localStorage.clear()} className="flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920]">
+          <NavLink to={'/'} onClick={()=> localStorage.clear()} className="flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920] transition-colors">
             <RiLogoutBoxRLine className='text-2xl' />
             <p>Logout</p>
           </NavLink>
