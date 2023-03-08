@@ -31,7 +31,7 @@ export default function DoughnutChart({ data }) {
 
   return (
     <>
-      {data?.task_count && data?.completed_count && data?.started_count?
+      {data?.task_count || data?.completed_count || data?.started_count?
         <Doughnut data={doughnutdata} options={options} />:
         <p className='text-center text-xl'>No data to show for today</p>
       }

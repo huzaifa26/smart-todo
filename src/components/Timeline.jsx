@@ -43,69 +43,24 @@ export const options = {
       min: 0,
       max: 24,
       ticks: {
-        stepSize: 1,
+        stepSize:1,
+        maxTicksLimit: 24
       },
       position: 'top',
     }
   },
-
 };
-
-const labels = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
 
 export function Timeline() {
   const { data, isLoading, isError, refetch } = useQuery(['timeline_data'], fetchData);
   async function fetchData(e) {
     const response = await axios.get(`${API_URL}tasks/timeline/`);
-    console.log(response);
     return response.data;
   }
-  // console.log(data);
-  // let label=[]
-  // data.forEach((d,index)=>{
-  //   label.push(d[0])
-  //   console.log(d[0]?.start_time.split("T")[0]);
-  // })
-  // console.log(label);
-
-  console.log(data);
 
   const data1 = {
     labels: data?.labels,
-    datasets: [
-      // {
-      //   label: "Sat",
-      //   data: [[0,1],[0,0],[0,1],[0,1],[11.47,17.47],[11.47,17.47],[11.47,17.47]],
-      //   borderColor: "#AF91E9",
-      //   backgroundColor: "#AF91E9"
-      // },
-      // {
-      //   label: "Sat",
-      //   data: [[11.47,17.47],[11.47,17.47],[11.47,17.47]],
-      //   borderColor: "#AF91E9",
-      //   backgroundColor: "#AF91E9"
-      // },
-      // {
-      //   label: "Sat",
-      //   data: [[11.47,17.47],[11.47,17.47],[11.47,17.47]],
-      //   borderColor: "#AF91E9",
-      //   backgroundColor: "#AF91E9"
-      // }
-            {
-                "label": "Todo Tasks",
-                "data": [[2,4], 8, 6, 7, 3, 5, 2],
-                "backgroundColor": "rgba(54, 162, 235, 0.2)",
-                "borderColor": "rgba(54, 162, 235, 1)",
-                "borderWidth": 1
-            },
-            {
-                "label": "Todo Tasks",
-                "data": [[6,4], 8, 0, 7, 3, 5, 0],
-                "backgroundColor": "rgba(54, 162, 235, 0.2)",
-                "borderColor": "rgba(54, 162, 235, 1)",
-                "borderWidth": 1
-            }
-    ],
+    datasets:data?.timeline
   };
-  return <Bar options={options} data={data1} />;
+  return (<>{isLoading === false ? <Bar className='w-full' options={options} data={data1} /> : <h1>Loading...</h1>}</>)
 }

@@ -77,7 +77,6 @@ export default function EditTask() {
       openDialog({ type: "info", title: "Nothing has been changes" });
       return;
     }
-    console.log(data)
     mutation.mutate(data);
   }
 

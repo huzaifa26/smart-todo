@@ -21,7 +21,6 @@ export default function TaskDetail({ closeModalHandler, task, detailModal }) {
       return Math.max(timeDiff, 0);
     }
   }
-
   const [remainingTime, setRemainingTime] = useState(calculateRemainingTime());
 
   useEffect(() => {
@@ -36,8 +35,6 @@ export default function TaskDetail({ closeModalHandler, task, detailModal }) {
   const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-
-
 
   return (
     <div style={detailModal === true ? { transform: "scale(1)", opacity: "1" } : { transform: "scale(0)", opacity: "0" }} className='w-[100vw] transition-opacity duration-150 absolute z-20 top-0 left-0 bg-[rgba(0,0,0,0.25)] backdrop-blur-sm h-[100vh] flex justify-center items-center'>
