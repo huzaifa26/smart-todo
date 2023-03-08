@@ -52,13 +52,6 @@ export default function EditTask() {
   const formSubmitHandler = (e) => {
     e.preventDefault();
     let user = queryClient.getQueriesData(["user"]);
-    // const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // const currentDate = new Date();
-    // const options = { timeZone: userTimezone };
-    // const formattedDate = currentDate.toISOString('en-US', options);
-    // let last_updated = new Date().toISOString().replace("T", " ");
-    // last_updated = last_updated.replace("Z", "")
-
     const last_updated=formatDate();
 
     let data = {

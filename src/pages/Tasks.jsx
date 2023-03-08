@@ -7,6 +7,7 @@ import TaskList from '../components/TaskList';
 import { MdAddTask } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom';
 import TaskDetail from '../components/TaskDetail';
+import { Timeline } from '../components/Timeline';
 
 export default function Tasks() {
   const formatDate = (date) => {
@@ -20,9 +21,10 @@ export default function Tasks() {
   const navigate = useNavigate();
   const [value, onChange] = useState(new Date());
   const [date, setDate] = useState(formatDate(new Date()));
-  const { data, isLoading, isError, refetch } = useQuery(['tasks', date], fetchData);
   const [detailModal,setDetailModal]=useState(false);
   const [task,setTask]=useState(null);
+  
+  const { data, isLoading, isError, refetch } = useQuery(['tasks', date], fetchData);
 
   const openModalHandler=(task)=>{
     setTask(task);
@@ -48,7 +50,7 @@ export default function Tasks() {
   return (
     <>
     {/* {detailModal &&  */}
-      <TaskDetail detailModal={detailModal} task={task} closeModalHandler={closeModalHandler}/>
+      <TaskDetail detailModal={detailModal} task={task} closeModalHandler={closeModalHandler} refetch={refetch}/>
     {/* }  */}
       <div className='flex flex-row h-full gap-3'>
         <div className='flex-1 bg-white rounded-xl p-2 divide-y-2'>
@@ -57,9 +59,11 @@ export default function Tasks() {
             <button onClick={() => navigate("/home/add-task")} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-40 h-10 transition-colors'><MdAddTask className='inline text-2xl mr-2' />Add Task</button>
           </div>
           <div className='p-2 pt-4 mt-2 space-y-5 overflow-auto max-h-[80vh] h-full'>
-            {isLoading ? <h1>Loading...</h1> : data.length > 0 ? data?.map((task, index) => {
-              return <TaskList openModalHandler={openModalHandler} task={task} />
-            }) : <h1 className='text-lg font-[400]'>No tasks for today.</h1>}
+            {/* {isLoading ? <h1>Loading...</h1> : data.length > 0 ? data?.map((task, index) => {
+              return <TaskList openModalHandler={openModalHandler} task={task} index={index}/>
+            }) : <h1 className='text-lg font-[400]'>No tasks for today.</h1>}  */}
+            <Timeline />
+            
           </div>
         </div>
         <div className='w-[30%] max-h-[420px] bg-white rounded-xl p-2 pt-4 divide-y-2'>

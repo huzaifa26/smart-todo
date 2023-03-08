@@ -1,18 +1,33 @@
 import { useQueryClient } from '@tanstack/react-query';
 import React from 'react'
+import DoughnutChart from '../components/DoughnutChart';
 import OpenWeatherHourly from '../components/Weather';
+import { useQuery } from '@tanstack/react-query';
+import { formatDate } from '../components/Utils';
+import axios from 'axios';
+import { API_URL } from '../components/constants';
+import LineChart from '../components/LineChart';
 
 export default function Dashboard() {
-  const queryClient = useQueryClient()
-  console.log(queryClient.getQueriesData("user"));
+  const queryClient = useQueryClient();
+  const { data, isLoading, isError, refetch } = useQuery(['daily-report'], fetchData);
+  console.log(data)
+  async function fetchData(e) {
+    let user=queryClient.getQueryData(['user']);
+    let date=formatDate();
+    date=date.split(" ")[0]
+    const response = await axios.get("http://127.0.0.1:8000/tasks/count/"+4+"/"+date+"/");
+    return response.data;
+  }
+
   return (
     <div className='flex flex-col h-full gap-3'>
       <div className='flex-1  flex gap-3'>
         <div className='flex-1 bg-white rounded-xl p-2'>
-          Weekly Report
+          <LineChart data={data?.month_count}/>
         </div>
         <div className='flex-1 bg-white rounded-xl p-2'>
-          Daily Report
+          <DoughnutChart data={data}/>
         </div>
       </div>
       <div className='flex-1 bg-white rounded-xl '>

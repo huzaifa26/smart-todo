@@ -9,6 +9,7 @@ import { MdOutlineSubtitles } from "react-icons/md"
 import { MdOutlineDescription } from "react-icons/md"
 import { BiCategoryAlt } from "react-icons/bi"
 import { AiOutlineFieldTime } from "react-icons/ai"
+import { formatDate } from './Utils';
 
 
 export default function AddTask() {
@@ -35,12 +36,16 @@ export default function AddTask() {
       if (error.response.data?.title) {
         openDialog({ type: "error", title: error.response.data?.title[0] })
       }
+      if (error.response.data?.start_time) {
+        openDialog({ type: "error", title: error.response.data?.start_time[0] })
+      }
     }
   })
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
     let user = queryClient.getQueriesData(["user"]);
+    const added_date=formatDate();
     let data = {
       user: user[0][1].data.id,
       title: formRef.current.title.value,
@@ -48,6 +53,7 @@ export default function AddTask() {
       category: formRef.current.category.value,
       start_time: formRef.current.start_time.value.split("T").join(" ") + ":00",
       end_time: formRef.current.end_time.value.split("T").join(" ") + ":00",
+      added_date:added_date,
     }
     console.log(data);
     mutation.mutate(data);

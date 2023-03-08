@@ -6,6 +6,5 @@ export const formatDate = () => {
   const hours = ('0' + currentDate.getHours()).slice(-2);
   const minutes = ('0' + currentDate.getMinutes()).slice(-2);
   const seconds = ('0' + currentDate.getSeconds()).slice(-2);
-  const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  return formattedDate;
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }

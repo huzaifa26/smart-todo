@@ -5,27 +5,25 @@ const OpenWeatherHourly = ({ city }) => {
   const [lat, setLat] = useState(null);
   const [lon, setLon] = useState(null);
 
-  const getLatLang = async () => {
-    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${'d6fc68236eb8c13898ca90316afa99cf'}`;
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      setLat(data[0].lat);
-      setLon(data[0].lon);
-      return { lat: data[0].lat, lon: data[0].lon }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // const getLatLang = async () => {
+  //   const url = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${'d6fc68236eb8c13898ca90316afa99cf'}`;
+  //   try {
+  //     const response = await fetch(url);
+  //     const data = await response.json();
+  //     setLat(data[0].lat);
+  //     setLon(data[0].lon);
+  //     return { lat: data[0].lat, lon: data[0].lon }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   useEffect(() => {
     const fetchData = async () => {
-      const { lat, lon } = getLatLang();
-      // const response = await fetch(`https://pro.openweathermap.org/data/2.5/hourly?lat=${lat}&lon=${lon}&appid=d6fc68236eb8c13898ca90316afa99cf`);
-      // const response = await fetch(`https://api.openweathermap.org/data/2.5/hourly?q=${city}&appid=d6fc68236eb8c13898ca90316afa99cf&units=metric`);
+      const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${"d6fc68236eb8c13898ca90316afa99cf"}&units=metric`);
+      
       const data = await response.json();
-      console.log(data);
-      // setHourlyData(data.list.slice(0, 7));
+      setHourlyData(data.list.slice(0, 7));
     };
     fetchData();
   }, [city]);
