@@ -42,23 +42,16 @@ function LineChart({ data }) {
       },
       title: {
         display: true,
-        text: 'Chart.js Line Chart',
+        text: 'Past 7 days report',
       },
     },
     scales: {
       y: {
         min: 0,
-        max: 10
+        max: 15
       }
     }
   };
-
-  function getGradient(ctx,chartArea,scales){
-    const grad=ctx.createLinearGradient(chartArea.left,0,chartArea.right,0);
-    grad.addColorStop(0,"rgba(255,26,104,1)")
-    grad.addColorStop(1,"rgba(75,192,192,1) ")
-    return grad
-  }
 
   const linechartdata = {
     labels,
@@ -73,6 +66,8 @@ function LineChart({ data }) {
       },
     ],
   };
+
+  console.log(linechartdata);
 
   return (
     <div>

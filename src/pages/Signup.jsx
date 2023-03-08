@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { useRef,  } from "react";
+import { useRef, } from "react";
 import { useNavigate } from "react-router";
 import { DialogContext } from '../components/constants';
 import { useMutation } from '@tanstack/react-query';
@@ -41,19 +41,19 @@ export default function Signup() {
         navigate("/")
       }, 2000)
     },
-    onError: (error)=>{
+    onError: (error) => {
       console.log(error);
-      if(error.response.status === 400 ){
+      if (error.response.status === 400) {
         openDialog({ type: "error", title: error.response.data.username })
       }
     }
   })
 
   return (
-    <div style={{backgroundImage:"linear-gradient(to right, #0E123F , rgba(14,18,63,0.8))"}} className='h-screen w-screen flex justify-center items-center bg-[aqua]'>
+    <div style={{ backgroundImage: "linear-gradient(to right, #0E123F , rgba(14,18,63,0.8))" }} className='h-screen w-screen flex justify-center items-center bg-[aqua]'>
       <div className="px-6 py-3 rounded min-w-[300px] shadow-lg w-[24.216vw] bg-white">
         <div className="flex flex-col items-center justify-center mt-[4.271vh] mb-4">
-          <h2 className="text-[clamp(32px,1.978vw,81px)] font-bold bg-[#0E123F] rounded-full"><FaUserPlus className='text-white m-4'/></h2>
+          <h2 className="text-[clamp(32px,1.978vw,81px)] font-bold bg-[#0E123F] rounded-full"><FaUserPlus className='text-white m-4' /></h2>
         </div>
         <form ref={formRef} onSubmit={signupFormhandler}>
           {/* <!-- username --> */}
@@ -78,9 +78,17 @@ export default function Signup() {
           </div>
 
           <div className="flex flex-col items-center justify-center my-3">
-            <button className={`h-[4.3518518518519vh] min-w-[150px] min-h-[30px] mt-[2.051vh] mb-[1.221vh] rounded-full py-1 w-[14.258vw] text-[clamp(14px,0.801vw,32.82px)] bg-[#0E123F] text-white uppercase font-bold`}>
-              Signup
-            </button>
+            {!mutation.isLoading &&
+              <button className={`h-[4.3518518518519vh] min-w-[150px] hover:bg-[#AF91E9] min-h-[30px] mt-[2.051vh] mb-[1.221vh] rounded-full py-1 w-[14.258vw] text-[clamp(14px,0.801vw,32.82px)] bg-[#0E123F] text-white uppercase font-bold`}>
+                Signup
+              </button>
+            }
+            {mutation.isLoading &&
+              <button type='button' className={`h-[4.3518518518519vh] min-w-[150px] min-h-[30px] mt-[2.051vh] mb-[1.221vh] rounded-full py-1 w-[14.258vw] text-[clamp(14px,0.801vw,32.82px)] bg-[#0E123F] text-white uppercase font-bold`}>
+                <img className='w-[30px] m-auto' src='/WhiteLoading.svg' />
+              </button>
+            }
+            <p className='text-[12px]'>Already have account? <span onClick={()=>navigate("/")} className='font-bold cursor-pointer hover:text-[#AF91E9]'>Login</span></p>
           </div>
         </form>
       </div>

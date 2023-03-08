@@ -10,7 +10,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { faker } from '@faker-js/faker';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { API_URL } from './constants';
 import axios from 'axios';
 
@@ -52,9 +52,11 @@ export const options = {
 };
 
 export function Timeline() {
+  const queryClient = useQueryClient();
+  const user=queryClient.getQueryData(["user"])
   const { data, isLoading, isError, refetch } = useQuery(['timeline_data'], fetchData);
   async function fetchData(e) {
-    const response = await axios.get(`${API_URL}tasks/timeline/`);
+    const response = await axios.get(API_URL+'tasks/timeline/'+user.data.id);
     return response.data;
   }
 

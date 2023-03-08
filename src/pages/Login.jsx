@@ -22,12 +22,12 @@ export default function Login() {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(['user'], data.data);
-      localStorage.setItem("user",JSON.stringify(data.data));
-      openDialog({type:"success",title:"Login Successfull"});
+      localStorage.setItem("user", JSON.stringify(data.data));
+      openDialog({ type: "success", title: "Login Successfull" });
       navigate("/home/dashboard");
     },
-    onError:(error) =>{
-      openDialog({type:"error",title:error.response.data?.non_field_errors[0]});
+    onError: (error) => {
+      openDialog({ type: "error", title: error.response.data?.non_field_errors[0] });
       console.log(error);
     }
   })
@@ -59,17 +59,24 @@ export default function Login() {
             <input name="password" className="text-[clamp(14px,0.586vw,24px)] border-b-[0.23148148148148vh] rounded px-3 py-1 mt-2 passwordIcon" type="password" placeholder="Type your password" />
           </div>
           <div className="flex flex-col items-center justify-center my-3">
-            <div className="flex w-full items-center justify-between text-xs text-gray-500">
+            {/* <div className="flex w-full items-center justify-between text-xs text-gray-500">
               <label className="flex items-center justify-center text-[clamp(12px,0.659vw,27px)] text-[#000] font-semibold"><input onChange={(e) => setRememberMe(!rememberMe)} type={"checkbox"} /> Remember me.</label>
               <Link to="findUser">
                 <p className="text-[clamp(12px,0.659vw,27px)] text-[#000] font-semibold">Forgot password?</p>
               </Link>
-            </div>
-            <button className={`h-[4.3518518518519vh] min-w-[150px] min-h-[30px] mt-[2.051vh] mb-[1.221vh] rounded-full py-1 w-[14.258vw] text-[clamp(14px,0.801vw,32.82px)] bg-[#0E123F] text-white uppercase font-bold`}>
-              Login
-            </button>
+            </div> */}
+            {loginMutation.isLoading === false &&
+              <button className={`h-[4.3518518518519vh] min-w-[150px] min-h-[30px] mt-[2.051vh] mb-[1.221vh] rounded-full py-1 w-[11.258vw] hover:bg-[#AF91E9] text-[clamp(14px,0.801vw,32.82px)] bg-[#0E123F] text-white uppercase font-bold`}>
+                Login
+              </button>
+            }
+            {loginMutation.isLoading &&
+              <button className={`h-[4.3518518518519vh] min-w-[150px] min-h-[30px] mt-[2.051vh] mb-[1.221vh] rounded-full py-1 w-[11.258vw] text-[clamp(14px,0.801vw,32.82px)] bg-[#0E123F] text-white uppercase font-bold`}>
+                <img className='w-[20px] m-auto' src='/WhiteLoading.svg' />
+              </button>
+            }
             <Link to={"/signup"}>
-              <button className="mb-[4.443vh] min-w-[150px] min-h-[30px] h-[4.3518518518519vh] my-1 rounded-full py-1 w-[14.258vw] text-[clamp(14px,0.801vw,32.82px)] bg-white border-2 border-[#0E123F] text-[#0E123F] font-bold uppercase">
+              <button className="mb-[4.443vh] hover:bg-[#0E123F] hover:text-white min-w-[150px] min-h-[30px] h-[4.3518518518519vh] my-1 rounded-full py-1 w-[11.258vw] text-[clamp(14px,0.801vw,32.82px)] bg-white border-2 border-[#0E123F] text-[#0E123F] font-bold uppercase">
                 Signup
               </button>
             </Link>

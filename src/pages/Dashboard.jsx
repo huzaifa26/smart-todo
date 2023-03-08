@@ -16,7 +16,7 @@ export default function Dashboard() {
     let user=queryClient.getQueryData(['user']);
     let date=formatDate();
     date=date.split(" ")[0]
-    const response = await axios.get("http://127.0.0.1:8000/tasks/count/"+4+"/"+date+"/");
+    const response = await axios.get("http://127.0.0.1:8000/tasks/count/"+user.data.id+"/"+date+"/");
     return response.data;
   }
 

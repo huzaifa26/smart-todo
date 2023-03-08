@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Calendar from 'react-calendar'
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { API_URL } from '../components/constants';
 import axios from 'axios';
 import TaskList from '../components/TaskList';
@@ -11,6 +11,10 @@ import { Timeline } from '../components/Timeline';
 import { MdOutlineSummarize } from "react-icons/md"
 
 export default function Tasks() {
+  const queryClient = useQueryClient();
+
+  let user=queryClient.getQueryData(['user']);
+
   const formatDate = (date) => {
     let newDate = new Date(date);
     const year = newDate.getFullYear();
@@ -37,7 +41,7 @@ export default function Tasks() {
   }
 
   async function fetchData(e) {
-    const response = await axios.post(`${API_URL}tasks/get/`, { user: 4, date: date });
+    const response = await axios.post(`${API_URL}tasks/get/`, { user: user.data.id, date: date });
     return response.data;
   }
 
@@ -62,7 +66,7 @@ export default function Tasks() {
             </div>
           </div>
           <div className='p-2 pt-4 mt-2 space-y-5 overflow-auto max-h-[80vh] h-full'>
-            {showOverView ? <Timeline /> : isLoading ? <h1>Loading...</h1> : data.length > 0 ? data?.map((task, index) => {
+            {showOverView ? <Timeline /> : isLoading ? <h1>Loading...</h1> : data?.length > 0 ? data?.map((task, index) => {
               return <TaskList openModalHandler={openModalHandler} task={task} index={index} />
             }) : <h1 className='text-lg font-[400]'>No tasks for today.</h1>}
 

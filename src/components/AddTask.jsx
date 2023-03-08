@@ -21,7 +21,6 @@ export default function AddTask() {
 
   const mutation = useMutation({
     mutationFn: (data) => {
-      console.log(data);
       return axios.post(`${API_URL}tasks/add/`, data)
     },
     onSuccess: () => {
@@ -55,7 +54,6 @@ export default function AddTask() {
       end_time: formRef.current.end_time.value.split("T").join(" ") + ":00",
       added_date:added_date,
     }
-    console.log(data);
     mutation.mutate(data);
   }
 
