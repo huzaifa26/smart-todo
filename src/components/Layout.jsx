@@ -4,8 +4,10 @@ import { MdDashboard } from "react-icons/md"
 import { FaTasks } from "react-icons/fa"
 import { AiFillSetting } from "react-icons/ai"
 import {RiLogoutBoxRLine} from "react-icons/ri"
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function Layout({children}) {
+  const useQuery=useQueryClient();
   return (
     <div className='w-full min-h-screen bg-[#0E123F] flex'>
       <div className=' w-60 p-2 pl-4 pt-8 text-white'>
@@ -25,7 +27,7 @@ export default function Layout({children}) {
               <li>Setting</li>
             </NavLink>
           </ul>
-          <NavLink to={'/'} onClick={()=> localStorage.clear()} className="flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920] transition-colors">
+          <NavLink to={'/'} onClick={()=> {localStorage.clear();useQuery.removeQueries();}} className="flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920] transition-colors">
             <RiLogoutBoxRLine className='text-2xl' />
             <p>Logout</p>
           </NavLink>

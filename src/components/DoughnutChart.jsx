@@ -10,6 +10,7 @@ export default function DoughnutChart({ data }) {
     labels: ['Total Tasks', 'Completed Tasks', 'Started Tasks'],
     datasets: [
       {
+        label: 'Today Report',
         data: [data?.task_count, data?.completed_count, data?.started_count],
         backgroundColor: ['#0E123F', '#AF91E9', '#eaeffc'],
         hoverBackgroundColor: ['#0E123F99', '#AF91E999', '#eaeffc90'],

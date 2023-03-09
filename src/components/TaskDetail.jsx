@@ -47,16 +47,17 @@ export default function TaskDetail({ closeModalHandler, task, detailModal }) {
           <h2><span className='text-lg font-bold'>Title: </span>{task?.title}</h2>
           <h2><span className='text-lg font-bold'>Description: </span>{task?.description}</h2>
           <h2><span className='text-lg font-bold'>Category: </span>{task?.category}</h2>
+          {task?.activity_type && <h2><span className='text-lg font-bold'>Activity Type: </span>{task?.activity_type}</h2>}
           <h2><span className='text-lg font-bold'>Added Date: </span>{task?.added_date}</h2>
           <h2><span className='text-lg font-bold'>Start Time: </span>{task?.start_time}</h2>
           <h2><span className='text-lg font-bold'>End Time: </span>{task?.end_time}</h2>
           <h2><span className='text-lg font-bold'>Last Updated: </span>{task?.last_updated}</h2>
-          <h2><span className='text-lg font-bold'>Status: </span>{task?.started && task?.completed ? "Completed" : task?.started ? "Active" : task?.completed ? "Completed" : remainingTime === 0? "Available to start" : "Upcomming"}</h2>
-          {!task?.started ?
+          <h2><span className='text-lg font-bold'>Status: </span>{task?.completed ? "Completed" : task?.started ? "Active" : !task?.completed && !task?.isMissed && remainingTime === 0 ? "Available to start" : task?.isMissed ?"Missed": "Upcomming"}</h2>
+          {!task?.started && !task.completed && !task.isMissed ?
             <h2><span className='text-lg font-bold'>Starts in: </span>{`${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`}</h2>
             : null
           }
-          {task?.started && !task?.completed &&
+          {task?.started && !task?.completed && 
             <h2><span className='text-lg font-bold'>Ends in: </span>{`${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`}</h2>
           }
         </div>

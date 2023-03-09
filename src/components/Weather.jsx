@@ -1,38 +1,62 @@
 import React, { useState, useEffect } from 'react';
+import moment from 'moment/moment';
 
-const OpenWeatherHourly = ({ city }) => {
+const OpenWeatherHourly = () => {
   const [hourlyData, setHourlyData] = useState([]);
-  const [lat, setLat] = useState(null);
-  const [lon, setLon] = useState(null);
-
-  // const getLatLang = async () => {
-  //   const url = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${'d6fc68236eb8c13898ca90316afa99cf'}`;
-  //   try {
-  //     const response = await fetch(url);
-  //     const data = await response.json();
-  //     setLat(data[0].lat);
-  //     setLon(data[0].lon);
-  //     return { lat: data[0].lat, lon: data[0].lon }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
+  const [cords, setCords] = useState(null);
+  const [location, setLocation] = useState("");
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${"d6fc68236eb8c13898ca90316afa99cf"}&units=metric`);
-      
+      // const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${"d6fc68236eb8c13898ca90316afa99cf"}&units=metric`);
+      const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${cords?.lat}&lon=${cords?.long}&appid=${"d6fc68236eb8c13898ca90316afa99cf"}&units=metric`);
       const data = await response.json();
-      setHourlyData(data.list.slice(0, 7));
+      setHourlyData(data?.list.slice(0, 5));
     };
     fetchData();
-  }, [city]);
-
+  }, [location]);
   const getIconUrl = (iconCode) => `https://openweathermap.org/img/wn/${iconCode}.png`;
+
+
+  function reverseGeocodingWithGoogle(latitude, longitude) {
+    fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyAyo7SHKsH86GdRBd8QuEJV_1vAROC6sAo`)
+      .then(res => res.json())
+      .then(response => {
+        console.log("User's Location Info: ", response)
+        console.log(response.plus_code.compound_code)
+        let s = response.plus_code.compound_code.split(" ")
+        s = s.slice(1, s.length)
+        s = s.join(" ")
+        setLocation(s)
+      })
+      .catch(status => {
+        console.log('Request failed.  Returned status of', status)
+      })
+  }
+
+  function geoFindMe() {
+    if (!navigator.geolocation) {
+      console.log("Geolocation is not supported by your browser");
+      return;
+    }
+    function success(position) {
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
+      setCords({ lat: position.coords.latitude, long: position.coords.longitude })
+      reverseGeocodingWithGoogle(latitude, longitude)
+    }
+    function error() {
+      console.log("Unable to retrieve your location");
+    }
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+
+  useEffect(() => {
+    geoFindMe();
+  }, [])
 
   return (
     <div className='m-2 mx-6'>
-      <h2 className='text-[18] font-bold'>Hourly Weather Forecast for {city}</h2>
+      <h2 className='text-[18] font-bold'>Hourly Weather Forecast for {location}</h2>
       <ul className='flex gap-3 mt-6'>
         {hourlyData.map((hour, index) => {
           const time = new Date(hour.dt_txt).toLocaleTimeString();

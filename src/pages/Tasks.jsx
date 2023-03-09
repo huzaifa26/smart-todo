@@ -13,8 +13,6 @@ import { MdOutlineSummarize } from "react-icons/md"
 export default function Tasks() {
   const queryClient = useQueryClient();
 
-  let user=queryClient.getQueryData(['user']);
-
   const formatDate = (date) => {
     let newDate = new Date(date);
     const year = newDate.getFullYear();
@@ -41,12 +39,14 @@ export default function Tasks() {
   }
 
   async function fetchData(e) {
+    let user = queryClient.getQueryData(['user']);
     const response = await axios.post(`${API_URL}tasks/get/`, { user: user.data.id, date: date });
-    return response.data;
+    return response?.data;
   }
 
   const onChangeHandler = (e) => {
     const formattedDate = formatDate(e);
+    refetch(formattedDate);
     setDate(formattedDate);
     onChange(e);
   }
@@ -61,7 +61,7 @@ export default function Tasks() {
           <div className='flex justify-between items-center'>
             <h1 className='text-2xl font-bold p-2'>Tasks</h1>
             <div>
-              <button onClick={() => setShowOverView(!showOverView)} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-40 h-10 transition-colors'><MdOutlineSummarize className='inline text-2xl mr-2' />{showOverView?"Hide Overview":"Show Overview"}</button>
+              <button onClick={() => setShowOverView(!showOverView)} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-40 h-10 transition-colors'><MdOutlineSummarize className='inline text-2xl mr-2' />{showOverView ? "Hide Overview" : "Show Overview"}</button>
               <button onClick={() => navigate("/home/add-task")} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-40 h-10 transition-colors'><MdAddTask className='inline text-2xl mr-2' />Add Task</button>
             </div>
           </div>

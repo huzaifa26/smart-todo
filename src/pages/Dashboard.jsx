@@ -11,27 +11,26 @@ import LineChart from '../components/LineChart';
 export default function Dashboard() {
   const queryClient = useQueryClient();
   const { data, isLoading, isError, refetch } = useQuery(['daily-report'], fetchData);
-  console.log(data)
   async function fetchData(e) {
-    let user=queryClient.getQueryData(['user']);
-    let date=formatDate();
-    date=date.split(" ")[0]
-    const response = await axios.get("http://127.0.0.1:8000/tasks/count/"+user.data.id+"/"+date+"/");
+    let user = queryClient.getQueryData(['user']);
+    let date = formatDate();
+    date = date.split(" ")[0]
+    const response = await axios.get("http://127.0.0.1:8000/tasks/count/" + user.data.id + "/" + date + "/");
     return response.data;
   }
 
   return (
     <div className='flex flex-col h-full gap-3'>
+      <div className='flex-1 bg-white rounded-xl max-h-[400px]'>
+        <LineChart  data={data?.month_count} />
+      </div>
       <div className='flex-1  flex gap-3'>
         <div className='flex-1 bg-white rounded-xl p-2'>
-          <LineChart data={data?.month_count}/>
+          <OpenWeatherHourly city={"Far Northwest, Columbus, OH, USA"} />
         </div>
         <div className='flex-1 bg-white rounded-xl p-2'>
-          <DoughnutChart data={data}/>
+          <DoughnutChart data={data} />
         </div>
-      </div>
-      <div className='flex-1 bg-white rounded-xl '>
-        <OpenWeatherHourly city={"Abbottabad"}/>
       </div>
     </div>
   )

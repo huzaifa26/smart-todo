@@ -24,6 +24,8 @@ ChartJS.register(
 );
 
 export const options = {
+  maintainAspectRatio: false,
+  responsive: true,
   indexAxis: 'y',
   elements: {
     bar: {

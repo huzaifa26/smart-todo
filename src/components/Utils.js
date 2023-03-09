@@ -8,3 +8,11 @@ export const formatDate = () => {
   const seconds = ('0' + currentDate.getSeconds()).slice(-2);
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+export const transformDate =(date)=>{
+  console.log(date)
+  date=date.split("T")
+  date=date.join(" ")
+  date=date.replace("Z","");
+  return date
+}

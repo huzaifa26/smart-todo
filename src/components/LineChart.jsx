@@ -22,20 +22,19 @@ ChartJS.register(
   Legend
 );
 
-
-
-
-
 function LineChart({ data }) {
 
   const labels = data?.map((item) => item.day);
   const tasksPerDay = data?.map((item) => item.total);
+  const competedTasksPerDay= data?.map((item) => item.completed);
 
   console.log(tasksPerDay);
 
 
   const options = {
+    maintainAspectRatio: false,
     responsive: true,
+    height: 400,
     plugins: {
       legend: {
         position: 'top',
@@ -57,10 +56,18 @@ function LineChart({ data }) {
     labels,
     datasets: [
       {
-        label: 'Tasks',
+        label: 'Total Tasks',
         data: tasksPerDay,
-        borderColor: '#AF91E9',
+        borderColor: '#0E123F',
         backgroundColor: '#0E123F',
+        fill: true,
+        tension: 0.4,
+      },
+      {
+        label: 'Completed Tasks',
+        data: competedTasksPerDay,
+        borderColor: '#AF91E9',
+        backgroundColor: '#AF91E9',
         fill: true,
         tension: 0.4,
       },
@@ -70,8 +77,8 @@ function LineChart({ data }) {
   console.log(linechartdata);
 
   return (
-    <div>
-      <Line options={options} data={linechartdata} />;
+    <div className='w-[95%] h-[95%] m-auto'>
+      <Line height={"100%"} width={"100%"} options={options} data={linechartdata} />
     </div>
   );
 }

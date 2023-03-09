@@ -10,6 +10,8 @@ import { MdOutlineDescription } from "react-icons/md"
 import { BiCategoryAlt } from "react-icons/bi"
 import { AiOutlineFieldTime } from "react-icons/ai"
 import { formatDate } from './Utils';
+import { MdOutlineLocalActivity } from "react-icons/md"
+
 
 export default function EditTask() {
   const location = useLocation();
@@ -23,6 +25,7 @@ export default function EditTask() {
     title: location.state?.task?.title,
     description: location.state?.task?.description,
     category: location.state?.task?.category,
+    activity_type: location.state?.task?.activity_type,
     start_time: location.state?.task?.start_time.replace("Z", ""),
     end_time: location.state?.task?.end_time.replace("Z", ""),
   });
@@ -34,6 +37,7 @@ export default function EditTask() {
     onSuccess: () => {
       openDialog({ type: "success", title: "Task Edited succesfully" })
       queryClient.invalidateQueries("tasks");
+      navigate(-1);
     },
     onError: (error) => {
       console.log(error);
@@ -52,7 +56,9 @@ export default function EditTask() {
   const formSubmitHandler = (e) => {
     e.preventDefault();
     let user = queryClient.getQueriesData(["user"]);
-    const last_updated=formatDate();
+    const last_updated = formatDate();
+
+    console.log(formRef.current.activity_type.value);
 
     let data = {
       user: user[0][1].data.id,
@@ -60,6 +66,7 @@ export default function EditTask() {
       title: formRef.current.title.value,
       description: formRef.current.description.value,
       category: formRef.current.category.value,
+      activity_type: formRef.current.activity_type.value === "Activity type" ? null : formRef.current.activity_type.value,
       start_time: formRef.current.start_time.value.split("T").join(" ") + ":00",
       end_time: formRef.current.end_time.value.split("T").join(" ") + ":00",
       last_updated: last_updated,
@@ -96,12 +103,16 @@ export default function EditTask() {
             <MdOutlineDescription className='ml-2 mt-3 absolute' />
             <textarea defaultValue={initialValues.description} className='border-[2px] border-[rgba(0,0,0,0.2)] flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[rgba(0,0,0,0.6)]' rows={5} name='description' placeholder='Description'></textarea>
           </div>
-          <div className='rounded-lg flex relative'>
+          <div className='border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg flex relative'>
             <BiCategoryAlt className='ml-2 mt-3 absolute' />
-            <select defaultChecked={initialValues.category} name='category' className='border-[2px] border-[rgba(0,0,0,0.2)] flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[rgba(0,0,0,0.6)]'>
-              <option value={"sport"}>Sport</option>
-              <option value={"gaming"}>Gaming</option>
-              <option value={"study"}>Study</option>
+            <input defaultValue={initialValues.category} className='flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[#AF91E9]' type={"text"} name='category' placeholder='Category'></input>
+          </div>
+          <div className='rounded-lg flex relative'>
+            <MdOutlineLocalActivity className='ml-2 mt-3 absolute' />
+            <select defaultValue={initialValues.activity_type} defaultChecked={initialValues.activity_type} name='activity_type' className='border-[2px] border-[rgba(0,0,0,0.2)] flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[rgba(0,0,0,0.6)]'>
+              <option disabled selected value={null}>Activity type</option>
+              <option value={"indoors"}>Indoors</option>
+              <option value={"outdoors"}>Outdoors</option>
             </select>
           </div>
           <div className='rounded-lg flex relative'>
@@ -112,7 +123,12 @@ export default function EditTask() {
             <AiOutlineFieldTime className='ml-2 mt-3 absolute' />
             <input defaultValue={initialValues.end_time.replace("Z", "")} name='end_time' className='flex-1 indent-[14px] border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg p-2 outline-none focus:border-[rgba(0,0,0,0.6)]' type={"datetime-local"} placeholder="Enter End date and time" />
           </div>
-          <button type='submit' className='bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-32 h-10'>Submit</button>
+          {
+            !mutation.isLoading && <button type='submit' className='bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-32 h-10'>Submit</button>
+          }
+          {
+            mutation.isLoading && <button type='button' className='bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-32 h-10'><img className='w-[30px] m-auto' src='/WhiteLoading.svg' /></button>
+          }
         </form>
       </div>
     </div>
