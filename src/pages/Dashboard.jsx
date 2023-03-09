@@ -21,15 +21,19 @@ export default function Dashboard() {
 
   return (
     <div className='flex flex-col h-full gap-3'>
-      <div className='flex-1 bg-white rounded-xl max-h-[400px]'>
-        <LineChart  data={data?.month_count} />
+      <div className='flex-1 bg-white rounded-xl max-h-[400px] flex justify-center items-center'>
+        {isLoading ? <img className='w-[50px] m-auto' src='/Loading.svg' /> :
+          <LineChart data={data?.month_count} />
+        }
       </div>
       <div className='flex-1  flex gap-3'>
         <div className='flex-1 bg-white rounded-xl p-2'>
           <OpenWeatherHourly city={"Far Northwest, Columbus, OH, USA"} />
         </div>
-        <div className='flex-1 bg-white rounded-xl p-2'>
-          <DoughnutChart data={data} />
+        <div className='flex-1 bg-white rounded-xl p-2 flex justify-center items-center'>
+          {isLoading ? <img className='w-[50px] m-auto' src='/Loading.svg' /> :
+            <DoughnutChart data={data} />
+          }
         </div>
       </div>
     </div>

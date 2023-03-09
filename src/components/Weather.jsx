@@ -5,12 +5,14 @@ const OpenWeatherHourly = () => {
   const [hourlyData, setHourlyData] = useState([]);
   const [cords, setCords] = useState(null);
   const [location, setLocation] = useState("");
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       // const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${"d6fc68236eb8c13898ca90316afa99cf"}&units=metric`);
       const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${cords?.lat}&lon=${cords?.long}&appid=${"d6fc68236eb8c13898ca90316afa99cf"}&units=metric`);
       const data = await response.json();
       setHourlyData(data?.list.slice(0, 5));
+      setLoading(false);
     };
     fetchData();
   }, [location]);
@@ -55,23 +57,27 @@ const OpenWeatherHourly = () => {
   }, [])
 
   return (
-    <div className='m-2 mx-6'>
-      <h2 className='text-[18] font-bold'>Hourly Weather Forecast for {location}</h2>
-      <ul className='flex gap-3 mt-6'>
-        {hourlyData.map((hour, index) => {
-          const time = new Date(hour.dt_txt).toLocaleTimeString();
-          const timeFormat = time.split(" ")[1];
-          const hours = time.split(":")[0]
-          return (
-            <li className='bg-[rgba(0,0,0,0.05)] rounded-xl flex flex-col items-center min-w-[100px] h-[130px] justify-center' key={index}>
-              <p className='font-bold text-16px'>{Math.round(hour.main.temp)}°C</p>
-              <img src={getIconUrl(hour.weather[0].icon)} alt={hour.weather[0].description} />
-              <p className='font-[700] text-18px'>{`${hours}:00`}</p>
-              <p className='text-[12px] font-[500]'>{timeFormat}</p>
-            </li>
-          )
-        })}
-      </ul>
+    <div className='m-2 mx-6 relative h-full'>
+      {loading === true ? <img className='w-[50px] m-auto absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]' src="/Loading.svg" /> :
+        <>
+          <h2 className='text-[18] font-bold text-left'>Hourly Weather Forecast for {location}</h2>
+          <ul className='flex gap-3 mt-6'>
+            {hourlyData.map((hour, index) => {
+              const time = new Date(hour.dt_txt).toLocaleTimeString();
+              const timeFormat = time.split(" ")[1];
+              const hours = time.split(":")[0]
+              return (
+                <li className='bg-[rgba(0,0,0,0.05)] rounded-xl flex flex-col items-center min-w-[100px] h-[130px] justify-center' key={index}>
+                  <p className='font-bold text-16px'>{Math.round(hour.main.temp)}°C</p>
+                  <img src={getIconUrl(hour.weather[0].icon)} alt={hour.weather[0].description} />
+                  <p className='font-[700] text-18px'>{`${hours}:00`}</p>
+                  <p className='text-[12px] font-[500]'>{timeFormat}</p>
+                </li>
+              )
+            })}
+          </ul>
+        </>
+      }
     </div>
   );
 };
