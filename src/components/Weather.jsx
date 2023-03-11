@@ -9,7 +9,7 @@ const OpenWeatherHourly = () => {
   useEffect(() => {
     const fetchData = async () => {
       // const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${"d6fc68236eb8c13898ca90316afa99cf"}&units=metric`);
-      const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${cords?.lat}&lon=${cords?.long}&appid=${"d6fc68236eb8c13898ca90316afa99cf"}&units=metric`);
+      const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${cords?.lat}&lon=${cords?.long}&appid=${""}&units=metric`);
       const data = await response.json();
       setHourlyData(data?.list.slice(0, 5));
       setLoading(false);
