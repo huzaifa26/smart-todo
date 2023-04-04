@@ -6,6 +6,8 @@ const OpenWeatherHourly = () => {
   const [cords, setCords] = useState(null);
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(true);
+  const [locationMessage,setLocationMessage]=useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       // const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${"d6fc68236eb8c13898ca90316afa99cf"}&units=metric`);
@@ -18,13 +20,10 @@ const OpenWeatherHourly = () => {
   }, [location]);
   const getIconUrl = (iconCode) => `https://openweathermap.org/img/wn/${iconCode}.png`;
 
-
   function reverseGeocodingWithGoogle(latitude, longitude) {
     fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyAyo7SHKsH86GdRBd8QuEJV_1vAROC6sAo`)
       .then(res => res.json())
       .then(response => {
-        console.log("User's Location Info: ", response)
-        console.log(response.plus_code.compound_code)
         let s = response.plus_code.compound_code.split(" ")
         s = s.slice(1, s.length)
         s = s.join(" ")
@@ -44,10 +43,13 @@ const OpenWeatherHourly = () => {
       var latitude = position.coords.latitude;
       var longitude = position.coords.longitude;
       setCords({ lat: position.coords.latitude, long: position.coords.longitude })
-      reverseGeocodingWithGoogle(latitude, longitude)
+      reverseGeocodingWithGoogle(latitude, longitude);
+      setLocationMessage(false)
     }
     function error() {
       console.log("Unable to retrieve your location");
+      setLocationMessage(true);
+      setLoading(false);
     }
     navigator.geolocation.getCurrentPosition(success, error);
   }
@@ -60,7 +62,7 @@ const OpenWeatherHourly = () => {
     <div className='m-2 mx-6 relative h-full'>
       {loading === true ? <img className='w-[50px] m-auto absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]' src="/Loading.svg" /> :
         <>
-          <h2 className='text-[18] font-bold text-left'>Hourly Weather Forecast for {location}</h2>
+          <h2 className='text-[18] font-bold text-left'>{!locationMessage ? `Hourly Weather Forecast for ${location}` :"Please allow to access location for weather."}</h2>
           <ul className='flex gap-3 mt-6'>
             {hourlyData.map((hour, index) => {
               const time = new Date(hour.dt_txt).toLocaleTimeString();

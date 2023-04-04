@@ -32,7 +32,6 @@ export const options = {
       borderWidth: 2,
     },
   },
-  responsive: true,
   plugins: {
     legend: false,
     title: {

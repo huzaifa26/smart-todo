@@ -39,6 +39,7 @@ export default function Tasks() {
   }
 
   async function fetchData(e) {
+    console.log("******************************************")
     let user = queryClient.getQueryData(['user']);
     const response = await axios.post(`${API_URL}tasks/get/`, { user: user.data.id, date: date });
     return response?.data;
@@ -67,7 +68,7 @@ export default function Tasks() {
           </div>
           <div className='p-2 pt-4 mt-2 space-y-5 overflow-auto max-h-[80vh] h-full'>
             {showOverView ? <Timeline /> : isLoading ? <img className='w-[50px] m-auto pt-4' src='/Loading.svg'/> : data?.length > 0 ? data?.map((task, index) => {
-              return <TaskList openModalHandler={openModalHandler} task={task} index={index} />
+              return <TaskList openModalHandler={openModalHandler} key={task.id} task={task} index={index} />
             }) : <h1 className='text-lg font-[400]'>No tasks for today.</h1>}
 
           </div>

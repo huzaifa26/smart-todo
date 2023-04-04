@@ -26,8 +26,8 @@ export default function EditTask() {
     description: location.state?.task?.description,
     category: location.state?.task?.category,
     activity_type: location.state?.task?.activity_type,
-    start_time: location.state?.task?.start_time.replace("Z", ""),
-    end_time: location.state?.task?.end_time.replace("Z", ""),
+    start_time: location.state?.task?.start_time?.replace("Z", "") || null,
+    end_time: location.state?.task?.end_time?.replace("Z", "") || null,
   });
 
   const mutation = useMutation({
@@ -35,12 +35,11 @@ export default function EditTask() {
       return axios.patch(`${API_URL}tasks/edit/`, data)
     },
     onSuccess: () => {
-      openDialog({ type: "success", title: "Task Edited succesfully" })
-      queryClient.invalidateQueries("tasks");
+      openDialog({ type: "success", title: "Task Edited succesfully" });
+      queryClient.invalidateQueries(["tasks"]);
       navigate(-1);
     },
     onError: (error) => {
-      console.log(error);
       if (error.response.data?.non_field_errors) {
         openDialog({ type: "error", title: error.response.data?.non_field_errors[0] })
       }
@@ -58,8 +57,6 @@ export default function EditTask() {
     let user = queryClient.getQueriesData(["user"]);
     const last_updated = formatDate();
 
-    console.log(formRef.current.activity_type.value);
-
     let data = {
       user: user[0][1].data.id,
       id: location.state?.task?.id,
@@ -67,15 +64,17 @@ export default function EditTask() {
       description: formRef.current.description.value,
       category: formRef.current.category.value,
       activity_type: formRef.current.activity_type.value === "Activity type" ? null : formRef.current.activity_type.value,
-      start_time: formRef.current.start_time.value.split("T").join(" ") + ":00",
-      end_time: formRef.current.end_time.value.split("T").join(" ") + ":00",
+      start_time: formRef.current.start_time.value ? formRef.current.start_time.value.split("T").join(" ") + ":00": null,
+      end_time: formRef.current.end_time.value ? formRef.current.end_time.value.split("T").join(" ") + ":00" : null,
       last_updated: last_updated,
     }
 
     const isFormEdited = Object.keys(initialValues).some((fieldName, index) => {
       let i = initialValues[fieldName];
       if (fieldName === "start_time" || fieldName === "end_time") {
-        i = i.slice(0, 16);
+        if(formRef.current.start_time.value || formRef.current.end_time.value){
+          i = i.slice(0, 16);
+        }
       }
       return formRef.current[fieldName].value !== i
     });
@@ -86,6 +85,7 @@ export default function EditTask() {
     }
     mutation.mutate(data);
   }
+
 
   return (
     <div className='h-full bg-white rounded-xl p-2 divide-y-2'>
@@ -117,11 +117,11 @@ export default function EditTask() {
           </div>
           <div className='rounded-lg flex relative'>
             <AiOutlineFieldTime className='ml-2 mt-3 absolute' />
-            <input defaultValue={initialValues.start_time.replace("Z", "")} name='start_time' className='flex-1 indent-[14px] border-[2px] border-[rgba(0,0,0,0.2)]border-[rgba(0,0,0,0.2)] rounded-lg p-2 outline-none focus:border-[rgba(0,0,0,0.6)]' type={"datetime-local"} placeholder="Enter Start date and time" />
+            <input defaultValue={initialValues.start_time?.replace("Z", "")} name='start_time' className='flex-1 indent-[14px] border-[2px] border-[rgba(0,0,0,0.2)]border-[rgba(0,0,0,0.2)] rounded-lg p-2 outline-none focus:border-[rgba(0,0,0,0.6)]' type={"datetime-local"} placeholder="Enter Start date and time" />
           </div>
           <div className='rounded-lg flex relative'>
             <AiOutlineFieldTime className='ml-2 mt-3 absolute' />
-            <input defaultValue={initialValues.end_time.replace("Z", "")} name='end_time' className='flex-1 indent-[14px] border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg p-2 outline-none focus:border-[rgba(0,0,0,0.6)]' type={"datetime-local"} placeholder="Enter End date and time" />
+            <input defaultValue={initialValues.end_time?.replace("Z", "")} name='end_time' className='flex-1 indent-[14px] border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg p-2 outline-none focus:border-[rgba(0,0,0,0.6)]' type={"datetime-local"} placeholder="Enter End date and time" />
           </div>
           {
             !mutation.isLoading && <button type='submit' className='bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-32 h-10'>Submit</button>

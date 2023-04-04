@@ -7,7 +7,6 @@ export default function Protected() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const user = localStorage.getItem("user")
-  console.log(JSON.parse(user));
 
   useEffect(() => {
     if (user === null) {

@@ -7,38 +7,41 @@ import { AiOutlineClockCircle } from "react-icons/ai"
 import { transformDate } from './Utils';
 
 export default function TaskList({ task, openModalHandler, index }) {
-  const [localIsMissed,setLocalIsMissed]=useState(task?.isMissed);
-  const [localIsCompleted,setLocalIsCompleted]=useState(task?.completed);
+  const [localIsMissed, setLocalIsMissed] = useState(task?.isMissed);
+  const [localIsCompleted, setLocalIsCompleted] = useState(task?.completed);
   const navigate = useNavigate();
   const { openDialog } = useContext(DialogContext);
   const [disableStart, setDisableStart] = useState(true);
   const [showContextMenu, setContextMenu] = useState(false);
-  
+
   const queryClient = useQueryClient();
 
-  const deleteMutation=useMutation({
-    mutationFn:()=>{
-      let user=queryClient.getQueriesData(["user"]);
-      return axios.delete(API_URL+"tasks/delete/"+user[0][1].data.id+"/"+task?.id)
+  const deleteMutation = useMutation({
+    mutationFn: () => {
+      let user = queryClient.getQueriesData(["user"]);
+      return axios.delete(API_URL + "tasks/delete/" + user[0][1].data.id + "/" + task?.id)
     },
-    onSuccess:()=>{
-      queryClient.invalidateQueries("tasks");
+    onSuccess: () => {
+      queryClient.invalidateQueries(['tasks']);
       openDialog({ type: "success", title: "Task Deleted" });
     },
-    onError:(error)=>{
-      console.log(error);
+    onError: (error) => {
+      openDialog({ type: "error", title: "Erroe deleting task" });
     }
   })
 
   const mutation = useMutation({
     mutationFn: (data) => {
+      console.log(task.completed || task.isMissed);
+      if(task.completed || task.isMissed) return []
       return axios.patch(`${API_URL}tasks/edit/`, data)
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries("tasks");
+    onSuccess: (res) => {
+      console.log(task.completed || task.isMissed);
+      if(task.completed || task.isMissed) return
+      queryClient.invalidateQueries(['tasks']);
     },
     onError: (error) => {
-      console.log(error);
       if (error.response.data?.non_field_errors) {
         openDialog({ type: "error", title: error.response.data?.non_field_errors[0] })
       }
@@ -52,56 +55,72 @@ export default function TaskList({ task, openModalHandler, index }) {
   });
 
   const buttonHandler = (e, type) => {
+    if (localIsCompleted || task?.completed) return
     let data = { ...task };
-    console.log(data);
+    data.last_updated=data?.last_updated && transformDate(data?.last_updated);
+
     if (type === "start") {
       data.started = true;
     }
-    if (type === "complete" && localIsCompleted !== true) {
-      setLocalIsCompleted(true)
-      data.completed = true;
-    }
-    if (type === "missed" && data.isMissed !== true && localIsMissed !== true) {
+
+    if (type === "missed" && data.isMissed !== true && localIsMissed !== true && localIsCompleted === false) {
       setLocalIsMissed(true)
       data.isMissed = true;
+    }
+
+    if (type === "complete" && localIsCompleted !== true) {
+      setLocalIsCompleted(true);
+      data.started = true;
+      data.completed = true;
     }
 
     const isFormEdited = Object.keys(task).some((fieldName, index) => {
       return data[fieldName] !== task[fieldName]
     });
 
-    if(isFormEdited){
-      mutation.mutate(data,type);
+    if (isFormEdited) {
+      mutation.mutate(data, type);
     }
 
-    data.start_time=transformDate(data.start_time);
-    data.end_time=transformDate(data.end_time);
+    data.start_time = data?.start_time && transformDate(data?.start_time);
+    data.end_time = data?.end_time && transformDate(data?.end_time);
     if (e !== null) {
       e.stopPropagation();
     }
   }
 
   const calculateRemainingTime = () => {
+    if (localIsCompleted || task?.completed) return
+
+    if (task?.start_time === null) {
+      if (disableStart === true) {
+        setDisableStart(false);
+      }
+      return 0
+    };
+
     const now = new Date().getTime();
-    let startTime = task?.start_time.replace("Z", "");
+    let startTime = task?.start_time?.replace("Z", "");
     startTime = new Date(startTime).getTime();
     const starttimeDiff = startTime - now;
 
-    let endTime = task?.end_time.replace("Z", "");
+    let endTime = task?.end_time?.replace("Z", "");
     endTime = new Date(endTime).getTime();
     const endtimeDiff = now - endTime;
 
-    if (starttimeDiff <= 0 && disableStart === true) { //The value of starttimeDiff will be negative if the start time of the task is in the past, and positive if the start time of the task is in the future
+
+    if (starttimeDiff <= 0 && disableStart === true) { 
       setDisableStart(false);
     }
+    
+    if (endtimeDiff > 0 && task?.started && task?.completed === false) {
+      buttonHandler(null, "complete");
+    }
 
-    if (endtimeDiff > 0 && task.started === false && task.isMissed === false) {
+    if (endtimeDiff > 0 && task?.started === false && task.isMissed === false && task?.completed === false) {
       buttonHandler(null, "missed");
     }
 
-    if (endtimeDiff > 0 && task?.started && task?.completed === false) { // The value of endtimeDiff will be negative if the end time of the task is in the future, and positive if the end time of the task is in the past.
-      buttonHandler(null, "complete");
-    }
     return Math.max(starttimeDiff, 0);
   }
 
@@ -109,10 +128,10 @@ export default function TaskList({ task, openModalHandler, index }) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-        setRemainingTime(calculateRemainingTime());
+      setRemainingTime(calculateRemainingTime());
     }, 1000);
     return () => clearInterval(interval);
-  },[setRemainingTime]);
+  }, [setRemainingTime,task?.start_time,task?.end_Time]);
 
   const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
   const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -128,7 +147,7 @@ export default function TaskList({ task, openModalHandler, index }) {
     };
   }, []);
 
-  const handleClickOutside=()=>{
+  const handleClickOutside = () => {
     setContextMenu(false);
   }
 
@@ -148,7 +167,7 @@ export default function TaskList({ task, openModalHandler, index }) {
             </div> : null
         }
         {task?.started === true && task.completed === false &&
-          <button onClick={(e) => buttonHandler(e, 'complete')} disabled={disableStart} style={disableStart ? { opacity: "0.5", cursor: "not-allowed" } : {}} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-40 h-10 transition-colors'>Mark as complete</button>
+          <button onClick={(e) => {buttonHandler(e, 'complete'); e.stopPropagation();}} disabled={disableStart} style={disableStart ? { opacity: "0.5", cursor: "not-allowed" } : {}} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-40 h-10 transition-colors'>Mark as complete</button>
         }
         {task?.isMissed === true && task?.completed === false &&
           <button onClick={(e) => e.stopPropagation()} disabled={disableStart} style={task?.isMissed ? { opacity: "0.5" } : {}} className='m-2 bg-[#0E123F] text-white rounded-lg w-24 h-10 transition-colors cursor-default'>Missed</button>
@@ -162,9 +181,9 @@ export default function TaskList({ task, openModalHandler, index }) {
           <div className='w-[5px] h-[5px] bg-black rounded-full'></div>
         </div>
         <ul style={showContextMenu === true ? { transform: "scale(1)", opacity: "1" } : { transform: "scale(0)", opacity: "0" }} className='transition-all absolute z-10 right-0 top-[50px] bg-[white] shadow-md flex flex-col divide-y-2'>
-          <li style={task?.started && task?.completed ? { opacity: "0.5", cursor: "not-allowed" } : {}} onClick={(e) => {  if (!task?.started && !task?.completed) { navigate("/home/edit-task", { state: { task } }) }; e.stopPropagation(); }} className='py-2 px-6 flex-1 flex justify-center select-none items-center hover:bg-[rgba(0,0,0,0.05)] transition-colors'>Edit</li>
-          <li style={task?.completed ? { opacity: "0.5", cursor: "not-allowed" } : {}} onClick={(e)=>{buttonHandler(null, "complete");e.stopPropagation();}} className='py-2 px-6 flex-1 flex justify-center items-center hover:bg-[rgba(0,0,0,0.05)] transition-colors select-none  '>Complete</li>
-          <li onClick={(e)=>{deleteMutation.mutate();setContextMenu(false);e.stopPropagation();}} className='py-2 px-6 flex-1 flex justify-center items-center hover:bg-[rgba(0,0,0,0.05)] transition-colors select-none  '>Delete</li>
+          <li style={task?.started && task?.completed ? { opacity: "0.5", cursor: "not-allowed" } : {}} onClick={(e) => { if (!task?.started && !task?.completed) { navigate("/home/edit-task", { state: { task } }) }; e.stopPropagation(); }} className='py-2 px-6 flex-1 flex justify-center select-none items-center hover:bg-[rgba(0,0,0,0.05)] transition-colors'>Edit</li>
+          <li style={task?.completed ? { opacity: "0.5", cursor: "not-allowed" } : {}} onClick={(e) => { buttonHandler(null, "complete"); e.stopPropagation(); }} className='py-2 px-6 flex-1 flex justify-center items-center hover:bg-[rgba(0,0,0,0.05)] transition-colors select-none  '>Complete</li>
+          <li onClick={(e) => { deleteMutation.mutate(); setContextMenu(false); e.stopPropagation(); }} className='py-2 px-6 flex-1 flex justify-center items-center hover:bg-[rgba(0,0,0,0.05)] transition-colors select-none  '>Delete</li>
         </ul>
       </div>
     </div>

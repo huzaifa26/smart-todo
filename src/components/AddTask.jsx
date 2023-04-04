@@ -30,7 +30,6 @@ export default function AddTask() {
       navigate(-1);
     },
     onError: (error) => {
-      console.log(error);
       if (error.response.data?.non_field_errors) {
         openDialog({ type: "error", title: error.response.data?.non_field_errors[0] })
       }
@@ -53,10 +52,11 @@ export default function AddTask() {
       description: formRef.current.description.value,
       category: formRef.current.category.value,
       activity_type: formRef.current.activity_type.value === "Activity type" ? null : formRef.current.activity_type.value,
-      start_time: formRef.current.start_time.value.split("T").join(" ") + ":00",
-      end_time: formRef.current.end_time.value.split("T").join(" ") + ":00",
-      added_date: added_date,
+      start_time: formRef.current.start_time.value ? formRef.current.start_time.value.split("T").join(" ") + ":00": null,
+      end_time: formRef.current.end_time.value ? formRef.current.end_time.value.split("T").join(" ") + ":00" : null,
+      added_date: formRef.current.start_time.value ? formRef.current.start_time.value.split("T").join(" ") + ":00" : added_date,
     }
+
     mutation.mutate(data);
   }
 

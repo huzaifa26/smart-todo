@@ -10,7 +10,6 @@ export const formatDate = () => {
 }
 
 export const transformDate =(date)=>{
-  console.log(date)
   date=date.split("T")
   date=date.join(" ")
   date=date.replace("Z","");

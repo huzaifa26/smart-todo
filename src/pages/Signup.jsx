@@ -42,7 +42,6 @@ export default function Signup() {
       }, 2000)
     },
     onError: (error) => {
-      console.log(error);
       if (error.response.status === 400) {
         openDialog({ type: "error", title: error.response.data.username })
       }

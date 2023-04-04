@@ -18,11 +18,9 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: (data) => {
-      console.log(data);
       return axios.post(`${API_URL}users/login/`, data)
     },
     onSuccess: (data) => {
-      console.log(data);
       queryClient.setQueryData(['user'], data.data);
       localStorage.setItem("user", JSON.stringify(data.data));
       openDialog({ type: "success", title: "Login Successfull" });
@@ -30,7 +28,6 @@ export default function Login() {
     },
     onError: (error) => {
       openDialog({ type: "error", title: error.response.data?.non_field_errors[0] });
-      console.log(error);
     }
   })
 

@@ -6,20 +6,21 @@ import { useQueryClient } from 'react-query';
 
 export default function TaskDetail({ closeModalHandler, task, detailModal }) {
   const calculateRemainingTime = () => {
-    if (!task?.started) {
+    if (!task?.started && task?.start_time !== null) {
       let startTime = task?.start_time.replace("Z", "");
       startTime = new Date(startTime).getTime()
       const now = new Date().getTime();
       const timeDiff = startTime - now;
       return Math.max(timeDiff, 0);
     }
-    if (task?.started && !task?.completed) {
+    if (task?.started && !task?.completed && task?.end_Time !== null) {
       let endTime = task?.end_time.replace("Z", "");
       endTime = new Date(endTime).getTime()
       const now = new Date().getTime();
       const timeDiff = endTime - now;
       return Math.max(timeDiff, 0);
     }
+    return 0;
   }
   const [remainingTime, setRemainingTime] = useState(calculateRemainingTime());
 

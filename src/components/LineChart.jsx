@@ -28,9 +28,6 @@ function LineChart({ data }) {
   const tasksPerDay = data?.map((item) => item.total);
   const competedTasksPerDay= data?.map((item) => item.completed);
 
-  console.log(tasksPerDay);
-
-
   const options = {
     maintainAspectRatio: false,
     responsive: true,
@@ -73,8 +70,6 @@ function LineChart({ data }) {
       },
     ],
   };
-
-  console.log(linechartdata);
 
   return (
     <div className='w-[95%] h-[95%] m-auto'>
