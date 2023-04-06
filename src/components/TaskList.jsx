@@ -32,13 +32,11 @@ export default function TaskList({ task, openModalHandler, index }) {
 
   const mutation = useMutation({
     mutationFn: (data) => {
-      console.log(task.completed || task.isMissed);
-      if(task.completed || task.isMissed) return []
+      if (task.completed || task.isMissed) return []
       return axios.patch(`${API_URL}tasks/edit/`, data)
     },
     onSuccess: (res) => {
-      console.log(task.completed || task.isMissed);
-      if(task.completed || task.isMissed) return
+      if (task.completed || task.isMissed) return
       queryClient.invalidateQueries(['tasks']);
     },
     onError: (error) => {
@@ -57,7 +55,7 @@ export default function TaskList({ task, openModalHandler, index }) {
   const buttonHandler = (e, type) => {
     if (localIsCompleted || task?.completed) return
     let data = { ...task };
-    data.last_updated=data?.last_updated && transformDate(data?.last_updated);
+    data.last_updated = data?.last_updated && transformDate(data?.last_updated);
 
     if (type === "start") {
       data.started = true;
@@ -96,8 +94,11 @@ export default function TaskList({ task, openModalHandler, index }) {
       if (disableStart === true) {
         setDisableStart(false);
       }
-      return 0
+      if (task?.start_time === null && task?.end_time === null) {
+        return 0
+      }
     };
+
 
     const now = new Date().getTime();
     let startTime = task?.start_time?.replace("Z", "");
@@ -109,10 +110,12 @@ export default function TaskList({ task, openModalHandler, index }) {
     const endtimeDiff = now - endTime;
 
 
-    if (starttimeDiff <= 0 && disableStart === true) { 
+    if (starttimeDiff <= 0 && disableStart === true) {
       setDisableStart(false);
     }
-    
+
+    console.log(endtimeDiff)
+
     if (endtimeDiff > 0 && task?.started && task?.completed === false) {
       buttonHandler(null, "complete");
     }
@@ -131,7 +134,7 @@ export default function TaskList({ task, openModalHandler, index }) {
       setRemainingTime(calculateRemainingTime());
     }, 1000);
     return () => clearInterval(interval);
-  }, [setRemainingTime,task?.start_time,task?.end_Time]);
+  }, [setRemainingTime, task?.start_time, task?.end_Time]);
 
   const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
   const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -167,7 +170,7 @@ export default function TaskList({ task, openModalHandler, index }) {
             </div> : null
         }
         {task?.started === true && task.completed === false &&
-          <button onClick={(e) => {buttonHandler(e, 'complete'); e.stopPropagation();}} disabled={disableStart} style={disableStart ? { opacity: "0.5", cursor: "not-allowed" } : {}} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-40 h-10 transition-colors'>Mark as complete</button>
+          <button onClick={(e) => { buttonHandler(e, 'complete'); e.stopPropagation(); }} disabled={disableStart} style={disableStart ? { opacity: "0.5", cursor: "not-allowed" } : {}} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-40 h-10 transition-colors'>Mark as complete</button>
         }
         {task?.isMissed === true && task?.completed === false &&
           <button onClick={(e) => e.stopPropagation()} disabled={disableStart} style={task?.isMissed ? { opacity: "0.5" } : {}} className='m-2 bg-[#0E123F] text-white rounded-lg w-24 h-10 transition-colors cursor-default'>Missed</button>
