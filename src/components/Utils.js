@@ -30,3 +30,18 @@ export function transformLabelDate(originalDate) {
   const rearrangedDate = parts[1] + "-" + parts[2] + "-" + parts[0];
   return rearrangedDate;
 }
+
+export function formatDateTime(originalDate) {
+  if (!originalDate){
+    return
+  }
+  const [date, time] = originalDate.split("T");
+  const [year, month, day] = date.split("-");
+  let [hours, minutes, seconds] = time.split(":");
+  let amOrPm = hours < 12 ? "AM" : "PM";
+  hours = hours % 12 || 12;
+
+  let formattedDate = `${month}-${day}-${year} ${hours}:${minutes}:${seconds} ${amOrPm}`;
+  formattedDate=formattedDate.replace("Z","")
+  return formattedDate;
+}

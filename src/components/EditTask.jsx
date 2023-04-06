@@ -28,6 +28,7 @@ export default function EditTask() {
     activity_type: location.state?.task?.activity_type,
     start_time: location.state?.task?.start_time?.replace("Z", "") || null,
     end_time: location.state?.task?.end_time?.replace("Z", "") || null,
+    totalTime: location.state?.task?.totalTime || null,
   });
 
   const mutation = useMutation({
@@ -37,6 +38,7 @@ export default function EditTask() {
     onSuccess: () => {
       openDialog({ type: "success", title: "Task Edited succesfully" });
       queryClient.invalidateQueries(["tasks"]);
+      queryClient.invalidateQueries(['totalTime']);
       navigate(-1);
     },
     onError: (error) => {
@@ -57,6 +59,15 @@ export default function EditTask() {
     let user = queryClient.getQueriesData(["user"]);
     const last_updated = formatDate();
 
+    var diffInMinutes = null;
+    if (formRef.current.start_time.value !== null && formRef.current.end_time.value !== null) {
+      const date1 = new Date(formRef.current.start_time.value);
+      const date2 = new Date(formRef.current.end_time.value);
+      const diffInMilliseconds = date2 - date1;
+      const diffInSeconds = Math.floor(diffInMilliseconds / 1000);
+      diffInMinutes = Math.floor(diffInSeconds / 60);
+    }
+
     let data = {
       user: user[0][1].data.id,
       id: location.state?.task?.id,
@@ -64,25 +75,32 @@ export default function EditTask() {
       description: formRef.current.description.value,
       category: formRef.current.category.value,
       activity_type: formRef.current.activity_type.value === "Activity type" ? null : formRef.current.activity_type.value,
-      start_time: formRef.current.start_time.value ? formRef.current.start_time.value.split("T").join(" ") + ":00": null,
+      start_time: formRef.current.start_time.value ? formRef.current.start_time.value.split("T").join(" ") + ":00" : null,
       end_time: formRef.current.end_time.value ? formRef.current.end_time.value.split("T").join(" ") + ":00" : null,
       last_updated: last_updated,
+      totalTime: diffInMinutes || initialValues || 0,
+      isStartTimeChange: formRef.current.start_time.value && initialValues?.start_time ? formRef.current.start_time.value === initialValues?.start_time?.slice(0, 16) : true
     }
+
 
     const isFormEdited = Object.keys(initialValues).some((fieldName, index) => {
       let i = initialValues[fieldName];
       if (fieldName === "start_time" || fieldName === "end_time") {
-        if(formRef.current.start_time.value || formRef.current.end_time.value){
+        if (formRef.current.start_time.value || formRef.current.end_time.value) {
           i = i.slice(0, 16);
         }
       }
+      if (fieldName === "totalTime") return true
       return formRef.current[fieldName].value !== i
     });
+
+    console.log(data);
 
     if (!isFormEdited) {
       openDialog({ type: "info", title: "Nothing has been changes" });
       return;
     }
+    
     mutation.mutate(data);
   }
 

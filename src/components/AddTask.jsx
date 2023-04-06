@@ -2,7 +2,7 @@ import React, { useContext, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { AiOutlineLeft } from "react-icons/ai"
 import { useMutation } from '@tanstack/react-query';
-import { API_URL, DialogContext } from './constants';
+import { API_URL, DialogContext, indoorActivities, outdoorActivities } from './constants';
 import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
 import { MdOutlineSubtitles } from "react-icons/md"
@@ -49,8 +49,10 @@ export default function AddTask() {
     e.preventDefault();
     let user = queryClient.getQueriesData(["user"]);
 
-    var diffInMinutes=null;
-    if(formRef.current.end_time.value !== null && formRef.current.end_time.value){
+    var diffInMinutes=0;
+    
+    console.log(formRef.current.start_time.value !== '' && formRef.current.end_time.value !== '')
+    if(formRef.current.start_time.value !== '' && formRef.current.end_time.value !== ''){
       const date1 = new Date(formRef.current.start_time.value);
       const date2 = new Date(formRef.current.end_time.value);
       const diffInMilliseconds = date2 - date1;
@@ -71,12 +73,36 @@ export default function AddTask() {
       added_date: formRef.current.start_time.value ? formRef.current.start_time.value.split("T").join(" ") + ":00" : added_date,
       totalTime:diffInMinutes
     }
+
+    console.log(data);
     mutation.mutate(data);
   }
 
 
-  const detectActivityType=()=>{
-    
+  const detectActivityType=(e)=>{
+    let activity=e.target.value
+    if(activity === ""){
+      setActivityType(null)
+      return
+    }
+    activity=activity.split(" ")
+    var outdoor=0
+    var indoor=0
+
+    for(let i = 0; i<activity.length;i++){
+      if (activity[i] in outdoorActivities){
+        outdoor+=1
+      } else
+      if (activity[i] in indoorActivities){
+        indoor+=1
+      }
+    }
+
+    if(outdoor>indoor){
+      setActivityType("outdoors")
+    }else if(indoor>outdoor){
+      setActivityType("indoors")
+    }
   }
 
   return (
@@ -89,7 +115,7 @@ export default function AddTask() {
         <form ref={formRef} onSubmit={formSubmitHandler} className='flex flex-col gap-3 w-[40%] mt-8 p-2'>
           <div className='border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg flex items-center relative'>
             <MdOutlineSubtitles className='ml-2 absolute' />
-            <input className='flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[#AF91E9]' type={"text"} name='title' placeholder='Title'></input>
+            <input onBlur={detectActivityType} className='flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[#AF91E9]' type={"text"} name='title' placeholder='Title'></input>
           </div>
           <div className='border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg flex relative'>
             <MdOutlineDescription className='ml-2 mt-3 absolute' />
@@ -101,7 +127,7 @@ export default function AddTask() {
           </div>
           <div className='border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg flex relative'>
             <MdOutlineLocalActivity className='ml-2 mt-3 absolute' />
-            <select defaultValue={activityType} name='activity_type' className='flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[#AF91E9]'>
+            <select key={activityType} defaultValue={activityType} name='activity_type' className='flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[#AF91E9]'>
               <option selected value={null}>Activity type</option>
               <option value={"indoors"}>Indoors</option>
               <option value={"outdoors"}>Outdoors</option>
