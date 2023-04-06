@@ -16,6 +16,7 @@ export default function Dashboard() {
     let date = formatDate();
     date = date.split(" ")[0]
     const response = await axios.get("http://127.0.0.1:8000/tasks/count/" + user.data.id + "/" + date + "/");
+    console.log(response.data);
     return response.data;
   }
 
@@ -32,7 +33,7 @@ export default function Dashboard() {
         </div>
         <div className='flex-1 bg-white rounded-xl p-2 flex justify-center items-center'>
           {isLoading ? <img className='w-[50px] m-auto' src='/Loading.svg' /> :
-            <DoughnutChart data={data} />
+            <DoughnutChart data={data}/>
           }
         </div>
       </div>

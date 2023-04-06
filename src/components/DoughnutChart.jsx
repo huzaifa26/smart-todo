@@ -2,6 +2,7 @@ import React from 'react'
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Chart } from "chart.js";
+import { timeConvert } from './Utils';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -33,7 +34,8 @@ export default function DoughnutChart({ data }) {
   return (
     <>
       {data?.task_count || data?.completed_count || data?.started_count?
-        <Doughnut data={doughnutdata} options={options} />:
+        <Doughnut data={doughnutdata} options={options} />
+        :
         <p className='text-center text-xl'>No data to show for today</p>
       }
     </>

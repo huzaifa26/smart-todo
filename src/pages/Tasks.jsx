@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import TaskDetail from '../components/TaskDetail';
 import { Timeline } from '../components/Timeline';
 import { MdOutlineSummarize } from "react-icons/md"
+import { timeConvert } from '../components/Utils';
 
 export default function Tasks() {
   const queryClient = useQueryClient();
@@ -39,17 +40,25 @@ export default function Tasks() {
   }
 
   async function fetchData(e) {
-    console.log("******************************************")
     let user = queryClient.getQueryData(['user']);
     const response = await axios.post(`${API_URL}tasks/get/`, { user: user.data.id, date: date });
     return response?.data;
   }
+
 
   const onChangeHandler = (e) => {
     const formattedDate = formatDate(e);
     refetch(formattedDate);
     setDate(formattedDate);
     onChange(e);
+  }
+
+  const totalTimeQuery = useQuery(['totalTime'], fetchTotalTime);
+
+  async function fetchTotalTime(e) {
+    let user = queryClient.getQueryData(['user']);
+    const response = await axios.get(API_URL + 'tasks/getTotalTime/' + user.data.id);
+    return response?.data;
   }
 
   return (
@@ -67,16 +76,22 @@ export default function Tasks() {
             </div>
           </div>
           <div className='p-2 pt-4 mt-2 space-y-5 overflow-auto max-h-[80vh] h-full'>
-            {showOverView ? <Timeline /> : isLoading ? <img className='w-[50px] m-auto pt-4' src='/Loading.svg'/> : data?.length > 0 ? data?.map((task, index) => {
+            {showOverView ? <Timeline /> : isLoading ? <img className='w-[50px] m-auto pt-4' src='/Loading.svg' /> : data?.length > 0 ? data?.map((task, index) => {
               return <TaskList openModalHandler={openModalHandler} key={task.id} task={task} index={index} />
             }) : <h1 className='text-lg font-[400]'>No tasks for today.</h1>}
 
           </div>
         </div>
         {!showOverView &&
-          <div style={showOverView ? { maxWidth: "0px", transform: "scale(0)" } : { maxWidth: "30%", transform: "scale(1)" }} className='transition-all delay-75 max-h-[420px] bg-white rounded-xl p-2 pt-4 divide-y-2'>
+          <div style={showOverView ? { maxWidth: "0px", transform: "scale(0)" } : { maxWidth: "30%", transform: "scale(1)" }} className='transition-all delay-75 max-h-[480px] bg-white rounded-xl p-2 pt-4 divide-y-2'>
             <h1 className='text-lg font-bold mt-2 ml-2'>Select Date to see tasks:</h1>
             <Calendar onChange={(e) => onChangeHandler(e)} value={value} className=" mt-4" />
+            <div className='flex flex-col justify-center h-[70px] pl-2'>
+              <p className='font-[600]'>Total Time for today:</p>
+              {!totalTimeQuery.isLoading &&
+                <p>{timeConvert(totalTimeQuery?.data?.today_total_time)}</p>
+              }
+            </div>
           </div>
         }
       </div>

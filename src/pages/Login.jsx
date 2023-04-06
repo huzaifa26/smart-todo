@@ -24,6 +24,7 @@ export default function Login() {
       queryClient.setQueryData(['user'], data.data);
       localStorage.setItem("user", JSON.stringify(data.data));
       openDialog({ type: "success", title: "Login Successfull" });
+      queryClient.invalidateQueries(['totalTime']);
       navigate("/home/dashboard");
     },
     onError: (error) => {

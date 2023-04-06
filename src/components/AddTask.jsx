@@ -11,6 +11,7 @@ import { BiCategoryAlt } from "react-icons/bi"
 import { AiOutlineFieldTime } from "react-icons/ai"
 import { formatDate } from './Utils';
 import { MdOutlineLocalActivity } from "react-icons/md"
+import { useState } from 'react';
 
 
 export default function AddTask() {
@@ -19,6 +20,8 @@ export default function AddTask() {
   const { openDialog } = useContext(DialogContext);
   const navigate = useNavigate();
   const formRef = useRef();
+
+  const [activityType,setActivityType]=useState();
 
   const mutation = useMutation({
     mutationFn: (data) => {
@@ -45,19 +48,35 @@ export default function AddTask() {
   const formSubmitHandler = (e) => {
     e.preventDefault();
     let user = queryClient.getQueriesData(["user"]);
+
+    var diffInMinutes=null;
+    if(formRef.current.end_time.value !== null && formRef.current.end_time.value){
+      const date1 = new Date(formRef.current.start_time.value);
+      const date2 = new Date(formRef.current.end_time.value);
+      const diffInMilliseconds = date2 - date1;
+      const diffInSeconds = Math.floor(diffInMilliseconds / 1000);
+      diffInMinutes = Math.floor(diffInSeconds / 60);
+    }
+
     const added_date = formatDate();
+
     let data = {
       user: user[0][1].data.id,
       title: formRef.current.title.value,
       description: formRef.current.description.value,
       category: formRef.current.category.value,
       activity_type: formRef.current.activity_type.value === "Activity type" ? null : formRef.current.activity_type.value,
-      start_time: formRef.current.start_time.value ? formRef.current.start_time.value.split("T").join(" ") + ":00": null,
+      start_time: formRef.current.start_time.value ? formRef.current.start_time.value.split("T").join(" ") + ":00" : null,
       end_time: formRef.current.end_time.value ? formRef.current.end_time.value.split("T").join(" ") + ":00" : null,
       added_date: formRef.current.start_time.value ? formRef.current.start_time.value.split("T").join(" ") + ":00" : added_date,
+      totalTime:diffInMinutes
     }
-
     mutation.mutate(data);
+  }
+
+
+  const detectActivityType=()=>{
+    
   }
 
   return (
@@ -82,7 +101,7 @@ export default function AddTask() {
           </div>
           <div className='border-[2px] border-[rgba(0,0,0,0.2)] rounded-lg flex relative'>
             <MdOutlineLocalActivity className='ml-2 mt-3 absolute' />
-            <select name='activity_type' className='flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[#AF91E9]'>
+            <select defaultValue={activityType} name='activity_type' className='flex-1 indent-6 rounded-lg p-2 outline-none focus:border-[#AF91E9]'>
               <option selected value={null}>Activity type</option>
               <option value={"indoors"}>Indoors</option>
               <option value={"outdoors"}>Outdoors</option>

@@ -11,6 +11,7 @@ import {
   Legend,
 } from 'chart.js';
 import { faker } from '@faker-js/faker';
+import { transformLabelDate } from './Utils';
 
 ChartJS.register(
   CategoryScale,
@@ -24,7 +25,9 @@ ChartJS.register(
 
 function LineChart({ data }) {
 
-  const labels = data?.map((item) => item.day);
+  const labels = data?.map((item) => {
+    return transformLabelDate(item.day)
+  });
   const tasksPerDay = data?.map((item) => item.total);
   const competedTasksPerDay= data?.map((item) => item.completed);
 

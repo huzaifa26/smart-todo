@@ -11,7 +11,7 @@ export default function Layout({children}) {
   return (
     <div className='w-full min-h-screen bg-[#0E123F] flex'>
       <div className=' w-60 p-2 pl-4 pt-8 text-white'>
-        <h1 className='font-bold text-2xl text-center'>Logo</h1>
+        <h1 className='font-bold text-2xl text-center'>Daybreak</h1>
         <div className='mt-16 flex flex-col justify-between h-[85%]'>
           <ul className='text-lg space-y-6'>
             <NavLink end to={"/home/dashboard"} className={({ isActive }) => isActive ? 'flex items-center space-x-4 bg-[#AF91E9] h-14 p-4 rounded-xl' : 'flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920] transition-colors'}>
