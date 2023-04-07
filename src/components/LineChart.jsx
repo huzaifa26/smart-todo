@@ -52,6 +52,8 @@ function LineChart({ data }) {
     }
   };
 
+  console.log(labels);
+
   const linechartdata = {
     labels,
     datasets: [

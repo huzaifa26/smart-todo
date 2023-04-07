@@ -29,6 +29,8 @@ export default function Tasks() {
   const [task, setTask] = useState(null);
   const [showOverView, setShowOverView] = useState(false);
 
+  console.log(queryClient.getQueryData(['weather']));
+
   const { data, isLoading, isError, refetch } = useQuery(['tasks', date], fetchData);
 
   const openModalHandler = (task) => {

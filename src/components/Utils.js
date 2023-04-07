@@ -45,3 +45,30 @@ export function formatDateTime(originalDate) {
   formattedDate=formattedDate.replace("Z","")
   return formattedDate;
 }
+export function formatWeatherDate(originalDate) {
+  if (!originalDate){
+    return
+  }
+  let [date, time] = originalDate.split("T");
+  time=time.split("-")[0];
+  const [year, month, day] = date.split("-");
+
+  let formattedDate = `${month}-${day}-${year}`;
+  console.log(formattedDate)
+  return formattedDate;
+}
+export function formatWeatherTime(originalDate) {
+  if (!originalDate){
+    return
+  }
+  let [date, time] = originalDate.split("T");
+  time=time.split("-")[0];
+  const [year, month, day] = date.split("-");
+  let [hours, minutes, seconds] = time.split(":");
+  let amOrPm = hours < 12 ? "AM" : "PM";
+  hours = hours % 12 || 12;
+
+  let formattedDate = `${hours}:${minutes} ${amOrPm}`;
+  formattedDate=formattedDate.replace("Z","")
+  return formattedDate;
+}
