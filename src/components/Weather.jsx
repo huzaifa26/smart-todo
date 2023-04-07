@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment/moment';
 import { API_URL, weatherData } from './constants';
 import { formatWeatherDate, formatWeatherTime } from './Utils';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRef } from 'react';
 
 const OpenWeatherHourly = () => {
   const queryClient=useQueryClient()
   const [hourlyData, setHourlyData] = useState([]);
   const [cords, setCords] = useState(null);
   const [location, setLocation] = useState("");
-  const [loading, setLoading] = useState(true);
   const [locationMessage, setLocationMessage] = useState(false);
+  const locationRef=useRef(null);
 
   function reverseGeocodingWithGoogle(latitude, longitude) {
     fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyAyo7SHKsH86GdRBd8QuEJV_1vAROC6sAo`)
@@ -19,6 +20,8 @@ const OpenWeatherHourly = () => {
         let s = response.plus_code.compound_code.split(" ")
         s = s.slice(1, s.length)
         s = s.join(" ")
+        console.log(s);
+        locationRef.current=s
         setLocation(s)
       })
       .catch(status => {
@@ -72,46 +75,47 @@ const OpenWeatherHourly = () => {
     const targetWeekday = weekdays.indexOf(dayName);
     const daysUntilTargetDay = (targetWeekday - todayWeekday + 7) % 7;
     let targetDate = new Date(today.getTime() + daysUntilTargetDay * 24 * 60 * 60 * 1000);
-    
-    // Set the hour of the resulting date
     targetDate.setHours(hour);
-    
     targetDate = targetDate.toString();
     return targetDate;
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      let prevTime = localStorage.getItem("prevTime");
-      prevTime = JSON.parse(prevTime)
-      const condition = checkTime(prevTime);
-      if (condition || localStorage.getItem("prevTime") === null) {
-        let loc = location;
-        loc = loc.replace(",", "");
-        loc = loc.replace(" ", "+")
-        const weatherResponse = await fetch(API_URL + "tasks/weather/" + loc);
-        const weatherRes = await weatherResponse.json();
-        for (let i=0;i<weatherRes.weather.length;i++){
-          let d=weatherRes.weather[i].datetime.split(" ")
-          let h=d[1].split(":")[0]
-          weatherRes.weather[i]['actualTime']=getTodayByDayName(d[0],h)
-        }
-        localStorage.setItem("weather", JSON.stringify(weatherRes.weather));
-        localStorage.setItem("prevTime", JSON.stringify(new Date()));
-        setHourlyData(weatherRes.weather.slice(0, 5));
-        queryClient.setQueryData(['weather'],weatherRes.weather);
-        setLoading(false);
-      } else {
-        let w = localStorage.getItem("weather");
-        w = JSON.parse(w);
-        setHourlyData(w);
-        queryClient.setQueryData(['weather'],w);
-        setLoading(false);
+  const weatherQuery=useQuery(['weather'],fetchData)
+
+  async function fetchData () {
+    if(locationRef.current === null) return [];
+    let prevTime = localStorage.getItem("prevTime");
+    prevTime = JSON.parse(prevTime)
+    const condition = checkTime(prevTime);
+    if (condition || localStorage.getItem("prevTime") === null) {
+      let loc = locationRef.current;
+      loc = loc.replace(",", "");
+      loc = loc.replace(" ", "+")
+      const weatherResponse = await fetch(API_URL + "tasks/weather/" + loc);
+      const weatherRes = await weatherResponse.json();
+      for (let i=0;i<weatherRes.weather.length;i++){
+        let d=weatherRes.weather[i].datetime.split(" ")
+        let h=d[1].split(":")[0]
+        weatherRes.weather[i]['actualTime']=getTodayByDayName(d[0],h)
       }
-    };
-    fetchData();
-  }, [location]);
+      localStorage.setItem("weather", JSON.stringify(weatherRes.weather));
+      localStorage.setItem("prevTime", JSON.stringify(new Date()));
+      setHourlyData(weatherRes.weather);
+      // queryClient.setQueryData(['weather'],weatherRes.weather);
+      return weatherRes.weather
+    } else {
+      let w = localStorage.getItem("weather");
+      w = JSON.parse(w);
+      setHourlyData(w);
+      // queryClient.setQueryData(['weather'],w);
+      return w
+    }
+  };
+
+  useEffect(() => {
+    // weatherQuery.refetch();
+    queryClient.invalidateQueries(['weather']);
+  }, [location,locationRef.current]);
 
   return (
     // <div className='m-2 mx-6 relative h-full'>
@@ -136,12 +140,12 @@ const OpenWeatherHourly = () => {
     //     </>
     //   }
     // </div>
-    <div className='m-2 mx-6 relative h-full'>
-      {loading === true ? <img className='w-[50px] m-auto absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]' src="/Loading.svg" /> :
+    <div className='m-2 mx-2 relative h-full'>
+      {weatherQuery.isLoading === true ? <img className='w-[50px] m-auto absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]' src="/Loading.svg" /> :
         <>
           <h2 className='text-[18] font-bold text-left'>{!locationMessage ? `Hourly Weather Forecast for ${location}` : "Please allow to access location for weather."}</h2>
           <ul className='flex gap-3 mt-6'>
-            {hourlyData?.map((weather, index) => {
+            {weatherQuery?.data?.map((weather, index) => {
               let d = weather.datetime.split(" ")
               return (
                 <div className='flex flex-col'>

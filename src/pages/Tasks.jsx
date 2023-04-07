@@ -14,6 +14,10 @@ import { timeConvert } from '../components/Utils';
 export default function Tasks() {
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    queryClient.invalidateQueries(['weather']);
+  }, [])
+
   const formatDate = (date) => {
     let newDate = new Date(date);
     const year = newDate.getFullYear();
@@ -28,8 +32,6 @@ export default function Tasks() {
   const [detailModal, setDetailModal] = useState(false);
   const [task, setTask] = useState(null);
   const [showOverView, setShowOverView] = useState(false);
-
-  console.log(queryClient.getQueryData(['weather']));
 
   const { data, isLoading, isError, refetch } = useQuery(['tasks', date], fetchData);
 
@@ -47,7 +49,6 @@ export default function Tasks() {
     return response?.data;
   }
 
-
   const onChangeHandler = (e) => {
     const formattedDate = formatDate(e);
     refetch(formattedDate);
@@ -59,7 +60,8 @@ export default function Tasks() {
 
   async function fetchTotalTime(e) {
     let user = queryClient.getQueryData(['user']);
-    const response = await axios.get(API_URL + 'tasks/getTotalTime/' + user.data.id);
+    let time = new Date();
+    const response = await axios.get(API_URL + 'tasks/getTotalTime/' + user.data.id + "/" + time);
     return response?.data;
   }
 

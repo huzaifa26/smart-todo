@@ -153,3 +153,29 @@ abbr:where([title]){
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+
+.titleDiv {
+  position: relative;
+  display: inline-block;
+}
+
+.titleDiv[data-title]:hover:after {
+  transition: all;
+  transition-duration: 100ms;
+  text-align: center;
+  min-width: 170px;
+  background-color: #0E123F;
+  border-radius: 10px;
+  color: white !important;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 8px 15px;
+  content: attr(data-title);
+  position: absolute;
+  top :30px;
+  left : 10%;
+  word-wrap: normal;
+  border: 1px solid #121212;
+  z-index: 10000;
+}

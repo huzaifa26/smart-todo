@@ -4,7 +4,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { API_URL, DialogContext } from './constants';
 import { AiOutlineClockCircle } from "react-icons/ai"
-import { transformDate } from './Utils';
+import { formatDateTime, transformDate } from './Utils';
+import { RiAlertFill } from "react-icons/ri"
 
 export default function TaskList({ task, openModalHandler, index }) {
   const [localIsMissed, setLocalIsMissed] = useState(task?.isMissed);
@@ -14,7 +15,14 @@ export default function TaskList({ task, openModalHandler, index }) {
   const [disableStart, setDisableStart] = useState(true);
   const [showContextMenu, setContextMenu] = useState(false);
 
+  const [weatherAlert, setWeatherAlert] = useState(false);
+  const [weatherAlertMessage, setWeatherAlertMessage] = useState(false);
+
   const queryClient = useQueryClient();
+
+  useEffect(()=>{
+    queryClient.invalidateQueries(['weather']);
+  },[])
 
   const deleteMutation = useMutation({
     mutationFn: () => {
@@ -99,6 +107,37 @@ export default function TaskList({ task, openModalHandler, index }) {
       }
     };
 
+    if (task?.start_time !== null && task?.end_time !== null && task?.activity_type === "outdoors" && task?.started === false) {
+      let weather = queryClient.getQueryData(['weather']);
+      if(weather === undefined){
+        weather=localStorage.getItem('weather');
+        weather=JSON.parse(weather);
+      }
+
+      let st = task?.start_time.replace("Z", "")
+      const remainingTime = new Date(st).getTime() - new Date().getTime();
+
+      const remainingHours = Math.floor(remainingTime / (1000 * 60 * 60));
+
+      if (remainingHours <= 5 && remainingHours >= 0) {
+        let dt = new Date(task?.start_time);
+
+        let hour = dt.getUTCHours();
+        for (let i = 0; i < weather?.length; i++) {
+          let d = new Date(weather[i].actualTime)
+          let dHour = d.getHours();
+          if (hour === dHour) {
+            console.log(weather[i].precip_prob)
+            if (weather[i].precip_prob > 49 && weatherAlert === false) {
+              setWeatherAlert(true);
+              setWeatherAlertMessage(`Task detected as outdoors, it is likely to ${weather[i].weather} at the time ${formatDateTime(task?.start_time)} for task.`);
+            } else if (weather[i].precip_prob < 50 && weatherAlert === true) {
+              setWeatherAlert(false);
+            }
+          }
+        }
+      }
+    }
 
     const now = new Date().getTime();
     let startTime = task?.start_time?.replace("Z", "");
@@ -113,8 +152,6 @@ export default function TaskList({ task, openModalHandler, index }) {
     if (starttimeDiff <= 0 && disableStart === true) {
       setDisableStart(false);
     }
-
-    console.log(endtimeDiff)
 
     if (endtimeDiff > 0 && task?.started && task?.completed === false) {
       buttonHandler(null, "complete");
@@ -161,6 +198,7 @@ export default function TaskList({ task, openModalHandler, index }) {
         <p className="truncate w-[90%] text-sm">{task.description}</p>
       </div>
       <div className='flex items-center gap-2 relative'>
+        {weatherAlert && <div className='titleDiv' onClick={(e)=> e.stopPropagation()} data-title={weatherAlertMessage} key={weatherAlertMessage}><RiAlertFill className='text-[#ff7b7b] mr-[10px] text-xl'/></div>}
         {task?.started === false && task?.isMissed === false && task?.completed === false && disableStart === false ?
           <button onClick={(e) => buttonHandler(e, 'start')} disabled={disableStart} style={disableStart ? { opacity: "0.5", cursor: "not-allowed" } : {}} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-24 h-10 transition-colors'>Start</button>
           : disableStart && !task.completed ?

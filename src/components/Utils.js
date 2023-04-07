@@ -17,6 +17,7 @@ export function transformDate(date) {
 }
 
 export function timeConvert(n) {
+  console.log(n);
   var num = n;
   var hours = (num / 60);
   var rhours = Math.floor(hours);
