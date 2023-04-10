@@ -20,9 +20,9 @@ export default function TaskList({ task, openModalHandler, index }) {
 
   const queryClient = useQueryClient();
 
-  useEffect(()=>{
+  useEffect(() => {
     queryClient.invalidateQueries(['weather']);
-  },[])
+  }, [])
 
   const deleteMutation = useMutation({
     mutationFn: () => {
@@ -109,9 +109,9 @@ export default function TaskList({ task, openModalHandler, index }) {
 
     if (task?.start_time !== null && task?.end_time !== null && task?.activity_type === "outdoors" && task?.started === false) {
       let weather = queryClient.getQueryData(['weather']);
-      if(weather === undefined){
-        weather=localStorage.getItem('weather');
-        weather=JSON.parse(weather);
+      if (weather === undefined) {
+        weather = localStorage.getItem('weather');
+        weather = JSON.parse(weather);
       }
 
       let st = task?.start_time.replace("Z", "")
@@ -121,13 +121,12 @@ export default function TaskList({ task, openModalHandler, index }) {
 
       if (remainingHours <= 5 && remainingHours >= 0) {
         let dt = new Date(task?.start_time);
-
-        let hour = dt.getUTCHours();
+        let hour = dt.getHours();
         for (let i = 0; i < weather?.length; i++) {
           let d = new Date(weather[i].actualTime)
-          let dHour = d.getHours();
+          let dHour = d.getUTCHours();
+
           if (hour === dHour) {
-            console.log(weather[i].precip_prob)
             if (weather[i].precip_prob > 49 && weatherAlert === false) {
               setWeatherAlert(true);
               setWeatherAlertMessage(`Task detected as outdoors, it is likely to ${weather[i].weather} at the time ${formatDateTime(task?.start_time)} for task.`);
@@ -198,7 +197,7 @@ export default function TaskList({ task, openModalHandler, index }) {
         <p className="truncate w-[90%] text-sm">{task.description}</p>
       </div>
       <div className='flex items-center gap-2 relative'>
-        {weatherAlert && <div className='titleDiv' onClick={(e)=> e.stopPropagation()} data-title={weatherAlertMessage} key={weatherAlertMessage}><RiAlertFill className='text-[#ff7b7b] mr-[10px] text-xl'/></div>}
+        {weatherAlert && <div className='titleDiv' onClick={(e) => e.stopPropagation()} data-title={weatherAlertMessage} key={weatherAlertMessage}><RiAlertFill className='text-[#ff7b7b] mr-[10px] text-xl' /></div>}
         {task?.started === false && task?.isMissed === false && task?.completed === false && disableStart === false ?
           <button onClick={(e) => buttonHandler(e, 'start')} disabled={disableStart} style={disableStart ? { opacity: "0.5", cursor: "not-allowed" } : {}} className='m-2 bg-[#0E123F] hover:bg-[#AF91E9] text-white rounded-lg w-24 h-10 transition-colors'>Start</button>
           : disableStart && !task.completed ?

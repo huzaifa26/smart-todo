@@ -25,11 +25,10 @@ export default function TaskDetail({ closeModalHandler, task, detailModal }) {
 
       if (remainingHours <= 5 && remainingHours >= 0) {
         let dt = new Date(task?.start_time);
-
-        let hour = dt.getUTCHours();
+        let hour = dt.getHours();
         for (let i = 0; i < weather?.length; i++) {
           let d = new Date(weather[i].actualTime)
-          let dHour = d.getHours();
+          let dHour = d.getUTCHours();
           if (hour === dHour) {
             if (weather[i].precip_prob > 49 && weatherAlert === false) {
               setWeatherAlert(true);
@@ -99,7 +98,7 @@ export default function TaskDetail({ closeModalHandler, task, detailModal }) {
           }
 
           {weatherAlert &&
-            <h2><span className='text-lg font-bold'>Tip: </span>{weatherAlertMessage}</h2>
+            <h2><span className='text-lg font-bold'>Alert: </span>{weatherAlertMessage}</h2>
 
           }
 
