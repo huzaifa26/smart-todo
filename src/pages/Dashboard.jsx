@@ -29,7 +29,7 @@ export default function Dashboard() {
       </div>
       <div className='flex-1  flex gap-3'>
         <div className='flex-1 bg-white rounded-xl p-2'>
-          <OpenWeatherHourly city={"Far Northwest, Columbus, OH, USA"} />
+          <OpenWeatherHourly />
         </div>
         <div className='flex-1 bg-white rounded-xl p-2 flex justify-center items-center'>
           {isLoading ? <img className='w-[50px] m-auto' src='/Loading.svg' /> :

@@ -147,8 +147,9 @@ const OpenWeatherHourly = () => {
           <ul className='flex gap-3 mt-6'>
             {weatherQuery?.data?.map((weather, index) => {
               let d = weather.datetime.split(" ")
+              console.log(weather)
               return (
-                <div className='flex flex-col'>
+                <div key={weather.datetime} className='flex flex-col'>
                   <li className='bg-[rgba(0,0,0,0.05)] rounded-xl flex flex-col items-center min-w-[100px] h-[150px] justify-center' key={index}>
                     <p className='font-[500] text-16px'>{`${weather.temp}°${weather.unit} / ${weather.precip_prob}%`}</p>
                     <img className='max-w-[50px]' src={weather.icon} alt={"Weather Icon"} />
