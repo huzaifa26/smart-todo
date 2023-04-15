@@ -45,6 +45,7 @@ export default function Tasks() {
 
   async function fetchData(e) {
     let user = queryClient.getQueryData(['user']);
+    console.log(user);
     const response = await axios.post(`${API_URL}tasks/get/`, { user: user.data.id, date: date });
     return response?.data;
   }
@@ -64,6 +65,8 @@ export default function Tasks() {
     const response = await axios.get(API_URL + 'tasks/getTotalTime/' + user.data.id + "/" + time);
     return response?.data;
   }
+
+  console.log(queryClient.getQueryData(["user"]))
 
   return (
     <>

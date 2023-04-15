@@ -8,7 +8,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function DoughnutChart({ data }) {
   const doughnutdata = {
-    labels: ['Total Tasks', 'Completed Tasks', 'Started Tasks'],
+    labels: ['Upcomming Tasks', 'Completed Tasks', 'Started Tasks'],
     datasets: [
       {
         label: 'Today Report',

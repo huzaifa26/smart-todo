@@ -9,6 +9,8 @@ import Login from "./pages/Login";
 import Setting from "./pages/Setting";
 import Signup from "./pages/Signup";
 import Tasks from "./pages/Tasks";
+import Profile from "./components/Profile";
+import OtherSetting from "./components/OtherSetting";
 
 export default function App() {
   return (
@@ -22,7 +24,10 @@ export default function App() {
             <Route path="tasks" element={<Layout><Tasks /></Layout>}></Route>
             <Route path="add-task" element={<Layout><AddTask /></Layout>}></Route>
             <Route path="Edit-task" element={<Layout><EditTask /></Layout>}></Route>
-            <Route path="setting" element={<Layout><Setting /></Layout>}></Route>
+            <Route path="setting" element={<Layout><Setting /></Layout>}>
+              <Route index element={<Profile></Profile>}></Route>
+              <Route path="other" element={<OtherSetting></OtherSetting>}></Route>
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>
