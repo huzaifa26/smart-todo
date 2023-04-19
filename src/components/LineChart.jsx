@@ -23,10 +23,10 @@ ChartJS.register(
   Legend
 );
 
-function LineChart({ data }) {
-
+function LineChart({data}) {
+  console.log(data);
   const labels = data?.map((item) => {
-    return transformLabelDate(item.day)
+    return transformLabelDate(item.date)
   });
   const tasksPerDay = data?.map((item) => item.total);
   const competedTasksPerDay= data?.map((item) => item.completed);
@@ -52,7 +52,6 @@ function LineChart({ data }) {
     }
   };
 
-  console.log(labels);
 
   const linechartdata = {
     labels,
@@ -75,6 +74,9 @@ function LineChart({ data }) {
       },
     ],
   };
+  console.log(data);
+  console.log(labels);
+
 
   return (
     <div className='w-[95%] h-[95%] m-auto'>

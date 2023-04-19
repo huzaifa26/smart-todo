@@ -94,7 +94,6 @@ export default function EditTask() {
       return formRef.current[fieldName].value !== i
     });
 
-    console.log(data);
 
     if (!isFormEdited) {
       openDialog({ type: "info", title: "Nothing has been changes" });

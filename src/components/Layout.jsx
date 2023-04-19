@@ -22,7 +22,7 @@ export default function Layout({children}) {
               <FaTasks className='text-2xl' />
               <li>Tasks</li>
             </NavLink>
-            <NavLink end to={"/home/setting"} className={({ isActive }) => isActive || location.pathname.includes("/home/setting/other") ? 'flex items-center space-x-4 bg-[#AF91E9] h-14 p-4 rounded-xl' : 'flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920] transition-colors'}>
+            <NavLink end to={"/home/setting"} className={({ isActive }) => isActive || location.pathname.includes("/home/setting/change-password") || location.pathname.includes("/home/setting/other") ? 'flex items-center space-x-4 bg-[#AF91E9] h-14 p-4 rounded-xl' : 'flex items-center space-x-4 h-14 p-4 rounded-xl hover:bg-[#AF91E920] transition-colors'}>
               <AiFillSetting className='text-2xl' />
               <li>Setting</li>
             </NavLink>

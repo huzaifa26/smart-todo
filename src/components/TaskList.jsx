@@ -31,6 +31,7 @@ export default function TaskList({ task, openModalHandler, index }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['tasks']);
+      queryClient.invalidateQueries(['daily-report']);
       openDialog({ type: "success", title: "Task Deleted" });
     },
     onError: (error) => {
@@ -46,6 +47,7 @@ export default function TaskList({ task, openModalHandler, index }) {
     onSuccess: (res) => {
       if (task.completed || task.isMissed) return
       queryClient.invalidateQueries(['tasks']);
+      queryClient.invalidateQueries(['daily-report']);
     },
     onError: (error) => {
       if (error.response.data?.non_field_errors) {

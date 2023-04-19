@@ -16,9 +16,9 @@ export default function Dashboard() {
     let date = formatDate();
     date = date.split(" ")[0]
     const response = await axios.get("http://127.0.0.1:8000/tasks/count/" + user.data.id + "/" + date + "/");
-    console.log(response.data);
     return response.data;
   }
+
 
   return (
     <div className='flex flex-col h-full gap-3'>

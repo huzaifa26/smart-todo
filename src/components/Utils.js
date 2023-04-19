@@ -26,7 +26,7 @@ export function timeConvert(n) {
 }
 
 export function transformLabelDate(originalDate) {
-  const parts = originalDate.split("-");
+  const parts = originalDate?.split("-");
   const rearrangedDate = parts[1] + "-" + parts[2] + "-" + parts[0];
   return rearrangedDate;
 }

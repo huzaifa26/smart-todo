@@ -20,7 +20,6 @@ const OpenWeatherHourly = () => {
         let s = response.plus_code.compound_code.split(" ")
         s = s.slice(1, s.length)
         s = s.join(" ")
-        console.log(s);
         locationRef.current=s
         setLocation(s)
       })
@@ -83,11 +82,11 @@ const OpenWeatherHourly = () => {
   const weatherQuery=useQuery(['weather'],fetchData)
 
   async function fetchData () {
-    if(locationRef.current === null) return [];
-    let prevTime = localStorage.getItem("prevTime");
-    prevTime = JSON.parse(prevTime)
-    const condition = checkTime(prevTime);
-    if (condition || localStorage.getItem("prevTime") === null) {
+    if(locationRef.current !== null){
+    // let prevTime = localStorage.getItem("prevTime");
+    // prevTime = JSON.parse(prevTime)
+    // const condition = checkTime(prevTime);
+    // if (condition || localStorage.getItem("prevTime") === null) {
       let loc = locationRef.current;
       loc = loc.replace(",", "");
       loc = loc.replace(" ", "+")
@@ -103,12 +102,13 @@ const OpenWeatherHourly = () => {
       setHourlyData(weatherRes.weather);
       // queryClient.setQueryData(['weather'],weatherRes.weather);
       return weatherRes.weather
-    } else {
-      let w = localStorage.getItem("weather");
-      w = JSON.parse(w);
-      setHourlyData(w);
-      // queryClient.setQueryData(['weather'],w);
-      return w
+    // } else {
+    //   let w = localStorage.getItem("weather");
+    //   w = JSON.parse(w);
+    //   setHourlyData(w);
+    //   // queryClient.setQueryData(['weather'],w);
+    //   return w
+    // }
     }
   };
 
@@ -117,17 +117,15 @@ const OpenWeatherHourly = () => {
     queryClient.invalidateQueries(['weather']);
   }, [location,locationRef.current]);
 
-  console.log(weatherQuery.data);
 
   return (
     <div className='m-2 mx-2 relative h-full'>
-      {weatherQuery.isLoading === true ? <img className='w-[50px] m-auto absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]' src="/Loading.svg" /> :
+      {weatherQuery.isLoading ? <img className='w-[50px] m-auto' src="/Loading.svg" /> :
         <>
           <h2 className='text-[18] font-bold text-left'>{!locationMessage ? `Hourly Weather Forecast for ${location}` : "Please allow to access location for weather."}</h2>
           <ul className='flex gap-3 mt-6'>
             {weatherQuery?.data?.map((weather, index) => {
               let d = weather.datetime.split(" ")
-              console.log(weather)
               return (
                 <div key={weather.datetime} className='flex flex-col'>
                   <li className='bg-[rgba(0,0,0,0.05)] rounded-xl flex flex-col items-center min-w-[100px] h-[150px] justify-center' key={index}>

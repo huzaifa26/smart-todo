@@ -51,7 +51,6 @@ export default function AddTask() {
 
     var diffInMinutes=0;
     
-    console.log(formRef.current.start_time.value !== '' && formRef.current.end_time.value !== '')
     if(formRef.current.start_time.value !== '' && formRef.current.end_time.value !== ''){
       const date1 = new Date(formRef.current.start_time.value);
       const date2 = new Date(formRef.current.end_time.value);

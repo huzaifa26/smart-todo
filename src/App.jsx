@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import Tasks from "./pages/Tasks";
 import Profile from "./components/Profile";
 import OtherSetting from "./components/OtherSetting";
+import ChangePassword from "./components/ChangePassword";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="Edit-task" element={<Layout><EditTask /></Layout>}></Route>
             <Route path="setting" element={<Layout><Setting /></Layout>}>
               <Route index element={<Profile></Profile>}></Route>
+              <Route path="change-password" element={<ChangePassword></ChangePassword>}></Route>
               <Route path="other" element={<OtherSetting></OtherSetting>}></Route>
             </Route>
           </Route>
